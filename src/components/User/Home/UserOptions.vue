@@ -1,6 +1,6 @@
 <template>
   <div class="user-options">
-    <div class="user-options-item" v-for="item in userOptionsList" v-ripple="{ color: '#aaa' }" @click="onLink(item.path)">
+    <div class="user-options-item" v-for="item in userOptionsList" :key = item v-ripple="{ color: '#aaa' }" @click="onLink(item.path)">
       <div class="user-options-left">
         <component :is="item.icon" theme="outline" size="0.35rem" fill="#333"></component>
         <span class="user-personal">{{ item.name }}</span>
@@ -23,10 +23,10 @@ const userOptionsList = ref([
   { name: "个人中心", icon: User, path: '/user/personal' },
   { name: "历史浏览", icon: History, path: '/user/history' },
   { name: "我的收藏", icon: DocumentFolder, path: '/user/collect' },
-  { name: "我的评论", icon: Comment, path: '/user/comment' },
-  { name: "问题反馈", icon: SmilingFace, path: '/user/feedback' },
-  { name: "求书", icon: Bookshelf, path: '/user/request' },
-  { name: "关于", icon: Info, path: '/user/about' },
+  // { name: "我的评论", icon: Comment, path: '/user/comment' },
+  // { name: "问题反馈", icon: SmilingFace, path: '/user/feedback' },
+  // { name: "求书", icon: Bookshelf, path: '/user/request' },
+  // { name: "关于", icon: Info, path: '/user/about' },
 ])
 
 function onLink(path) {

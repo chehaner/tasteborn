@@ -1,11 +1,10 @@
 import request from "@/utils/request";
 
 // 发起登录请求
-export const getLogin = (username, password, code) => {
+export const getLogin = (username, password ) => {
   return request.post('/login', {
     username,
     password,
-    code
   })
 }
 
@@ -15,8 +14,8 @@ export const getReg = (regInfo) => {
 }
 
 // 获取用户信息
-export const getUserInfo = () => {
-  return request.get('/userInfo', )
+export const getUserInfo = (userId) => {
+  return request.get(`/userInfo?userId=${userId}`)
 }
 
 // 修改用户信息

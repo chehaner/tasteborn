@@ -5,7 +5,8 @@ export default createStore({
     picUrl: "http://localhost:3000",
     plateUrl: "https://images.sanyeex.top/novelPicture/",
     tabBarShow: true,
-    searchScroll: 0
+    searchScroll: 0,
+    userId: null,
   },
   getters: {
   },
@@ -13,7 +14,10 @@ export default createStore({
     // 修改搜索滚动条位置
     setSearchScroll(state,value) {
       state.searchScroll = value
-    }
+    },
+    setUserId(state, userId) {
+      state.userId = userId;
+    },
   },
   actions: {
   },

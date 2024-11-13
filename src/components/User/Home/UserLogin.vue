@@ -40,14 +40,12 @@ const formData = ref({
 async function onLogin() {
   const loginInfo = formData.value
   if (!loginInfo.username || !loginInfo.password || !loginInfo.code) return Snackbar.error('用户名,密码,验证码不能为空')
-
-  const userCheck = /^[a-zA-Z0-9]{4,16}$/;
+  const userCheck = /^[a-zA-Z0-9]{3,16}$/;
   const pwdCheck = /^(?![a-zA-Z]+$)(?!\d+$)(?![^\da-zA-Z\s]+$).{6,20}$/;
-  if (!userCheck.test(loginInfo.username)) return Snackbar.error('用户名长度4到16位不包含中文和特殊字符')
+  if (!userCheck.test(loginInfo.username)) return Snackbar.error('用户名长度3到16位不包含中文和特殊字符')
   if (!pwdCheck.test(loginInfo.password)) return Snackbar.error('密码必须包含(字母和数字),长度6-20位')
-
   // 发起登录请求
-  const res = await getLogin(loginInfo.username, loginInfo.password, loginInfo.code)
+  const res = await getLogin(loginInfo.username, loginInfo.password)
   if (res.status !== 200) {
     Snackbar.error(res.message)
     return
@@ -56,6 +54,7 @@ async function onLogin() {
     Snackbar.success(res.message)
     location.reload()
   }, 200)
+  localStorage.setItem('userId', res.data.userId)
   localStorage.setItem('token', res.data.token) // 保存token
 }
 // 显示注册

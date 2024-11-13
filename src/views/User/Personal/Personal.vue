@@ -5,6 +5,7 @@
       :name="item.name"
       :info="`${item.info}`"
       v-for="item in personalOptionsList"
+      :key = item
     >
     </PersonalOptionsItem>
     <PersonalNickname
@@ -44,7 +45,8 @@ initUserInfo()
 
 // 初始化用户信息
 async function initUserInfo() {
-  const res = await getUserInfo()
+  const userId = localStorage.getItem('userId')
+  const res = await getUserInfo(userId)
   if (res.status !== 200) {
     setTimeout(() => {
       Snackbar.error('请登录!')

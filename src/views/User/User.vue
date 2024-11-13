@@ -74,7 +74,8 @@ function onBack() {
 }
 // 获取用户信息
 async function initUserInfo() {
-  const res = await getUserInfo()
+  const userId = localStorage.getItem('userId')
+  const res = await getUserInfo(userId)
   if (res.status === 401) {
     loginShow.value = true
     localStorage.clear('token')

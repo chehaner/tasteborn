@@ -2,11 +2,12 @@
   <div class="library-popup">
     <var-popup position="left" v-model:show="isPopup">
       <div class="library-popup-block">
-        <div class="library-popup-item" v-for="(item, index) in optionsList">
+        <div class="library-popup-item" v-for="(item, index) in optionsList" :key = index>
           <h4>{{ item.name }}</h4>
           <div class="library-popup-list">
             <p
               v-for="className in item.list"
+              :key = className
               :class="{'options-active': optionsIndex[index].options === className}"
               @click="onChange(className, index)"
             >{{ className }}</p>

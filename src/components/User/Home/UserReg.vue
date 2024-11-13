@@ -65,18 +65,20 @@ async function onReg() {
       return Snackbar.error('用户名,邮箱,密码,确认密码,验证码不能为空')
     }
   }
-  const userCheck = /^[a-zA-Z0-9]{4,16}$/;
+  const userCheck = /^[a-zA-Z0-9]{3,16}$/;
   const pwdCheck = /^(?![a-zA-Z]+$)(?!\d+$)(?![^\da-zA-Z\s]+$).{6,20}$/;
   const emailCheck = /^([a-zA-Z\d][\w-]{2,})@(\w{2,})\.([a-z]{2,})(\.[a-z]{2,})?$/;
 
   // 验证用户信息
-  if (!userCheck.test(regInfo.username)) return Snackbar.error('用户名长度4到16位不包含中文和特殊字符')
+  if (!userCheck.test(regInfo.username)) return Snackbar.error('用户名长度3到16位不包含中文和特殊字符')
   if (!emailCheck.test(regInfo.email)) return Snackbar.error('邮箱不合法')
   if (!pwdCheck.test(regInfo.password)) return Snackbar.error('密码必须包含(字母和数字),长度6-20位')
   if (regInfo.password !== regInfo.confirmPwd) return Snackbar.error('两次输入的密码不一致，请检查！')
 
   const res = await getReg(regInfo)
-  if (res.status !== 200) return Snackbar.error(res.message)
+  if (res.status !== 200) {
+    return Snackbar.error(res.message)
+  }
   setTimeout(() => {
     Snackbar.success('注册成功')
     onLoginShow()
