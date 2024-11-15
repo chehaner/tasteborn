@@ -62,7 +62,7 @@ function onLink() {
   margin-right: 20px;
   .home-item-img img {
     width: 150px;
-    height: 210px;
+    height: 150px;
     border-radius: 5px;
   }
   .home-item-name {
@@ -72,6 +72,7 @@ function onLink() {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    text-align: center;
   }
   .home-item-tags {
     display: flex;

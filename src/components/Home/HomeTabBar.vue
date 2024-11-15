@@ -18,7 +18,8 @@ import { Search } from "@icon-park/vue-next";
 <style scoped lang="scss">
 .home-tab-bar {
   padding: 15px;
-  background-color: #fff;
+  background-color: rgb(255, 255, 255);
+  
   .home-tab {
     display: flex;
     align-items: center;
@@ -26,14 +27,15 @@ import { Search } from "@icon-park/vue-next";
     height: 50px;
     background-color: #f1f1f1;
     border-radius: 10px;
-    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     .home-tab-icon {
+      padding-left:10px;
+      padding-top: 4px;
       display: flex;
       align-items: center;
-      padding-left: 10px;
     }
     .home-tab-name {
-      padding-left: 5px;
+      margin-left: 10px;
       color: #333;
       transform: translateY(-2px);
       span {

@@ -1,7 +1,7 @@
 <template>
   <div class="user-info">
     <div class="user-pic">
-      <img src="https://sanye-1256143046.cos.ap-guangzhou.myqcloud.com/jiabaili.jpg" alt="" v-if="!picUrl">
+      <img src="@/assets/images/avatar.png" alt="" v-if="!picUrl">
       <img :src="picUrl" alt="" v-else>
     </div>
     <div class="user-right">
@@ -18,7 +18,8 @@
       </div>
     </div>
     <div class="user-bj"
-         :style="{ backgroundImage: picUrl ? `url(${picUrl}) !important` : '' }"></div>
+         :style="{ backgroundImage: picUrl ? `url(${picUrl}) !important` : '' }">
+    </div>
   </div>
 </template>
 
@@ -88,7 +89,7 @@ function onLoginShow() {
   top: 0;
   left: 0;
   z-index: 1;
-  background: url("https://sanye-1256143046.cos.ap-guangzhou.myqcloud.com/jiabaili.jpg") center / cover no-repeat;
+  background: url("@/assets/images/avatar.png") center / cover no-repeat;
   filter: blur(35px);
   transform: scale(1.1);
 }

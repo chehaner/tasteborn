@@ -60,9 +60,10 @@ async function getRecipe() {
 <style scoped lang="scss">
 .home-daily {
   background-color: #fff;
-  margin-top: 10px;
+  margin: 10px;
   padding: 10px 15px 15px 15px;
-  
+  border-radius: 10px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
   .home-daily-title {
     display: flex;
     justify-content: space-between;
@@ -72,12 +73,14 @@ async function getRecipe() {
     div {
       margin: 0;
       font-size: 24px;
-      font-weight: 500;
+      color: #414141;
+      font-weight: bolder;
     }
     
     span {
       font-size: 18px;
-      color: #ff3992;
+      color: #B8DEA1;
+      font-weight: bolder
     }
   }
   

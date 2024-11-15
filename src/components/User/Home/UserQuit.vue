@@ -1,6 +1,6 @@
 <template>
   <div class="user-quit" v-show="username">
-    <var-button block type="primary" color="red" @click="onQuit">退出登录</var-button>
+    <var-button block type="primary" color="#ff7512" @click="onQuit">退出登录</var-button>
     <var-dialog
       title="提示"
       message="是否退出登录!"

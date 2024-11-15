@@ -1,6 +1,6 @@
 <template>
   <div class="home-swiper">
-    <var-swipe class="swipe-example shadow">
+    <var-swipe class="swipe-example shadow" :autoplay="2000">
       <var-swipe-item v-for="(url, index) in imgUrl" :key="index">
         <img class="swipe-example-image" :src="url" alt="">
       </var-swipe-item>
@@ -11,19 +11,22 @@
 <script setup>
 import {ref} from "vue";
 
-const imgUrl = ref([
+const imgUrl = ref(
+  [
+  require("@/assets/images/image4.png"),
   require("@/assets/images/image1.png"),
   require("@/assets/images/image2.png"),
   require("@/assets/images/image3.png"),
-  require("@/assets/images/image4.png"),
   require("@/assets/images/image5.png")
 ])
 </script>
 
 <style scoped lang="scss">
 .home-swiper {
-  padding: 0 15px 15px 15px;
+  padding: 15px 15px 15px 15px;
   background-color: #fff;
+  margin: 10px;
+  border-radius: 10px;
 }
 .swipe-example {
   height: 200px;
