@@ -54,7 +54,7 @@ async function onLogin() {
     Snackbar.success(res.message)
     location.reload()
   }, 200)
-  localStorage.setItem('userId', res.data.userId)
+  localStorage.setItem('user_id', res.data.user_id)
   localStorage.setItem('token', res.data.token) // 保存token
 }
 // 显示注册

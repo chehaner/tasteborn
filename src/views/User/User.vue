@@ -74,7 +74,7 @@ function onBack() {
 }
 // 获取用户信息
 async function initUserInfo() {
-  const userId = localStorage.getItem('userId')
+  const userId = localStorage.getItem('user_id')
   const res = await getUserInfo(userId)
   if (res.status === 401) {
     loginShow.value = true
@@ -83,6 +83,7 @@ async function initUserInfo() {
   }
   if (res.status !== 200) return this.Snackbar.error(res.message)
   userInfo.value = res.data
+  console.log("userInfo", userInfo)
 }
 
 watch(() => route.query, () => {

@@ -14,8 +14,8 @@ export const getReg = (regInfo) => {
 }
 
 // 获取用户信息
-export const getUserInfo = (userId) => {
-  return request.get(`/userInfo?userId=${userId}`)
+export const getUserInfo = (user_id) => {
+  return request.get(`/userInfo?user_id=${user_id}`)
 }
 
 // 修改用户信息

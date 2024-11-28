@@ -8,6 +8,13 @@
     <div class="home-item-name">
       {{ name }}
     </div>
+    <!-- 作者 -->
+    <div class="novel-header-author">
+      <!-- 作者头像 -->
+      <img class="author-avatar" :src="props.avatar" alt="用户头像" />
+      <!-- 作者昵称 -->
+      <span class="author-nickname">{{ props.author_name }}</span>
+    </div>
   </div>
 </template>
 
@@ -34,6 +41,14 @@ const props = defineProps({
     type: String,
     default: ""
   },
+  avatar: {
+    type: String,
+    default: ""
+  },
+  author_name: {
+    type: String,
+    default: "匿名用户"
+  },
   // tags: {
   //   type: Array,
   //   default: []
@@ -43,12 +58,13 @@ function picUrlSplice() {
   const url = `${storePicUrl.value}/images/${props.img}`
   return url
 }
-
 // 跳转链接
 function onLink() {
   setTimeout(() => {
-    router.push(`/novel/${props.recipe_id}`)
-  }, 0)
+    router.push({
+      path: `/recipes/${props.id}`,
+    });
+  }, 0);
 }
 </script>
 
@@ -56,24 +72,29 @@ function onLink() {
 .home-item {
   display: flex;
   flex-direction: column;
-  width: 150px;
-  height: 100%;
-  padding: 5px 0;
-  margin-right: 20px;
+  width: 100%; 
+  padding: 10px; 
+  box-sizing: border-box; 
+  
   .home-item-img img {
-    width: 150px;
-    height: 150px;
-    border-radius: 5px;
+    width: 100%; /* 动态适应父容器宽度 */
+    height: 250px; /* 保持宽高比 */
+    border-radius: 8px; /* 调整圆角 */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 添加阴影 */
   }
+
   .home-item-name {
-    font-size: 20px;
+    font-size: 20px; /* 调整字体大小 */
+    font-weight: 500;
     color: #333;
+    margin-top: 8px; /* 增加图像与文字的间距 */
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 2; /* 限制两行显示 */
     overflow: hidden;
-    text-align: center;
+    line-height: 1.4; /* 优化文字间距 */
   }
+}
   .home-item-tags {
     display: flex;
     .tags-item {
@@ -84,5 +105,26 @@ function onLink() {
   .tags-item:last-of-type span {
     display: none;
   }
+  .novel-header-author {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+/* Author avatar */
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover; /* 确保头像填充区域 */
+  border: 2px solid #ccc; /* 添加头像边框 */
+}
+
+/* Author nickname */
+.author-nickname {
+  font-size: 14px;
+  color: #555;
+  font-weight: 400;
 }
 </style>

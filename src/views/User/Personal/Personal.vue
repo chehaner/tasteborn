@@ -14,7 +14,7 @@
     >
     </PersonalNickname>
     <PersonalAvatar
-      name="头像"
+      :username="userInfo.username"
       :img-info="userInfo.picture">
     </PersonalAvatar>
     <PersonalPassword

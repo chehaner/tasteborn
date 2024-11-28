@@ -1,31 +1,27 @@
 <template>
   <div class="novel-header" v-if="props.picUrl">
+    <!-- 封面 -->
     <div class="novel-header-pic">
-      <img :src="picUrl()" class="shadow" alt="" >
+      <img :src=props.picUrl alt="" >
     </div>
-    <div class="novel-header-info">
-      <div class="novel-header-top">
-        <div class="novel-header-name">
-          {{ props.name }}
-        </div>
-        <div class="novel-header-author">
-          {{ props.author }}
-        </div>
-      </div>
-      <div class="novel-header-bottom">
-        <div class="novel-header-isSerial">
-          {{ props.isSerial === true ? '连载中' : '完结' }}
-        </div>
-        <div class="novel-header-className">
-          {{ props.className }}
-        </div>
-        <div class="novel-header-isAnimation">
-          {{ props.isAnimation === true ? '动画化' : '未动画化' }}
-        </div>
-      </div>
+    <!-- 标题 -->
+    <div class="novel-header-name">
+      {{ props.name }}
     </div>
-    <div class="novel-header-bj">
-      <div class="bj" :style="{ background: `url('${picUrl()}') center / cover no-repeat` }"></div>
+    <!-- 作者 -->
+    <div class="novel-header-author">
+      <!-- 作者头像 -->
+      <img class="author-avatar" :src="props.avatar" alt="用户头像" />
+      <!-- 作者昵称 -->
+      <span class="author-nickname">{{ props.author_name }}</span>
+      <!-- 关注按钮
+      <var-button size="small"
+        class="follow-btn"
+        :class="{ followed: isFollowed }"
+        @click="toggleFollow"
+      >
+        {{ isFollowed ? "已关注" : "关注" }}
+      </var-button> -->
     </div>
   </div>
 </template>
@@ -33,7 +29,7 @@
 <script setup>
 import {useStore} from "vuex";
 import {computed} from "vue";
-
+import { ref } from "vue";
 const store = useStore()
 
 const storePicUrl = computed(() => store.state.picUrl)
@@ -51,21 +47,13 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  author: {
+  author_name: {
     type: String,
     default: ''
   },
-  isSerial: {
-    type: Boolean,
-    default: true
-  },
-  className: {
+  avatar: {
     type: String,
     default: ''
-  },
-  isAnimation: {
-    type: Boolean,
-    default: true
   },
 })
 
@@ -73,68 +61,73 @@ const props = defineProps({
 function picUrl() {
   return `${storePicUrl.value}${props.id}/${props.picUrl}`
 }
+const isFollowed = ref(false);
+function toggleFollow() {
+  isFollowed.value = !isFollowed.value;
+}
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .novel-header {
   display: flex;
-  position: relative;
-  padding: 50px 25px 0 25px;
-  .novel-header-pic {
-    position: relative;
-    z-index: 11;
-    transform: translateY(20px);
-    img {
-      width: 140px;
-      height: 200px;
-      object-fit: cover;
-    }
-  }
-  .novel-header-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    position: relative;
-    z-index: 11;
-    padding: 0 0 10px 10px;
-    color: #fff;
-    .novel-header-top {
-      .novel-header-name {
-        font-size: 24px;
-        font-weight: 500;
-        letter-spacing: 1px;
-        text-shadow: 0 0 30px #000;	//设置发光效果
-      }
-      .novel-header-author {
-        font-size: 20px;
-        text-shadow: 0 0 30px #000;	//设置发光效果
-        padding-top: 10px;
-      }
-    }
-    .novel-header-bottom {
-      display: flex;
-      padding: 12px 0 10px 0;
-      >div {
-        padding-right: 15px;
-        font-size: 17px;
-        text-shadow: 0 0 30px #000;	//设置发光效果
-      }
-    }
-  }
-  .novel-header-bj {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    .bj {
-      width: 100%;
-      height: 100%;
-      filter: blur(40px);
-      transform: scale(1.1);
-    }
-  }
+  flex-direction: column;
+}
+
+.novel-header-pic img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.novel-header-info {
+  padding: 10px 15px;
+}
+
+.novel-header-name {
+  font-size: 30px;
+  font-weight: bold;
+  color: #333333;
+  padding:20px;
+}
+
+.novel-header-author {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 元素间距 */
+  padding: 15px;
+  font-size: 14px;
+}
+
+/* 用户头像 */
+.author-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* 圆形头像 */
+  object-fit: cover; /* 保持图片比例 */
+  border: 1px solid #ddd;
+}
+
+/* 用户昵称 */
+.author-nickname {
+  flex-grow: 1; /* 占用剩余空间 */
+  font-size:20px;
+  color: #333;
+}
+
+/* 关注按钮 */
+.follow-btn {
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+  color: white;
+  background-color: #0a8a6c;
+  transition: background-color 0.3s ease;
+}
+
+/* 已关注样式 */
+.follow-btn.followed {
+  background-color: #6c757d; /* 灰色 */
+  cursor: default;
 }
 </style>

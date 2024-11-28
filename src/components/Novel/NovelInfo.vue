@@ -1,29 +1,15 @@
 <template>
   <div class="novel-info">
     <div class="novel-info-content">
-      <div class="novel-info-basic">
-        <div class="novel-info-wordCount">
-          {{ countManage(props.wordCount) }}字
-        </div>
-        <em>|</em>
-        <div class="novel-info-collect">
-          {{  props.collect }} <span>收藏</span>
-        </div>
-        <em>|</em>
-        <div class="novel-info-updateTime">
-          最后更新时间: <span>{{ props.updateTime }}</span>
-        </div>
+      <div class="novel-intro">
+        <p>{{ props.intro }}</p>
       </div>
-
-      <div class="novel-info-recentChapters">
-        最新章节: <span @click="onLink">{{ props.recentChapters }}</span>
+      <!-- <div class="novel-info-tags">
+        分类: <p v-for="tag in props.classTags" :key="tag">{{ tag }}</p>
       </div>
-      <div class="novel-info-tags">
-        分类: <p v-for="tag in props.classTags">{{ tag }}</p>
-      </div>
-    </div>
-    <div class="novel-intro">
-      <p v-for="item in props.intro">{{ item.replace(/\s+/g, "") }}</p>
+      <div class="novel-info-updateTime">
+        最后更新时间: <span>{{ props.updateTime }}</span>
+      </div> -->
     </div>
   </div>
 </template>
@@ -53,7 +39,7 @@ const props = defineProps({
     default: []
   },
   intro: {
-    type: Array,
+    type: String,
     default: []
   }
 })
@@ -93,7 +79,7 @@ function onLink() {
     }
     .novel-info-recentChapters {
       font-weight: bold;
-      font-size: 18px;
+      font-size: 20px;
       color: #333333;
       span {
         font-weight: normal;
@@ -105,7 +91,7 @@ function onLink() {
       align-items: center;
       flex-wrap: wrap;
       font-weight: bold;
-      font-size: 18px;
+      font-size: 20px;
       color: #333333;
       p {
         padding: 5px 10px;
@@ -120,12 +106,10 @@ function onLink() {
   .novel-intro {
     padding-top: 5px;
     p {
-      text-indent: 30px;
-      font-size: 18px;
-      padding-bottom: 5px;
-      line-height: 32px;
-      color: #555;
-      font-weight: 600;
+      font-size: 20px;
+      line-height: 1.9;
+      color: #333;
+      white-space: pre-line;
     }
   }
 }

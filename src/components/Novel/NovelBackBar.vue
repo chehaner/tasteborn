@@ -64,8 +64,28 @@ function onBack() {
   left: 0;
   right: 0;
   z-index: 20;
+  background-color: transparent; // 初始背景透明
+  transition: background-color 0.3s ease; // 平滑过渡
 }
+
+.novel-back.isTabColor {
+  background-color: rgba(255, 255, 255, 0.8); // 滑动后背景变为半透明白色
+}
+
+:deep(.var-app-bar) {
+  border: none; // 去掉可能存在的边框
+  box-shadow: none; // 去掉阴影
+}
+
 :deep(.var-app-bar__toolbar) {
-  height: 0.80rem;
+  height: 0.8rem; // 控制工具栏高度
+}
+
+:deep(.var-button) {
+  transition: color 0.3s ease; // 按钮文字颜色平滑过渡
+}
+
+:deep(.var-button:hover) {
+  background-color: rgba(255, 255, 255, 0.2); // 鼠标悬停时，按钮背景颜色浅透明
 }
 </style>

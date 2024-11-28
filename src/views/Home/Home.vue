@@ -1,10 +1,7 @@
 <template>
   <div id="home">
     <HomeTabBar />
-    <HomeSwiper />
     <HomeDaily />
-    <HomeRecommend />
-    <HomeLibrary />
     <BottomTab :active="0" />
   </div>
 </template>

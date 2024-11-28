@@ -1,32 +1,38 @@
 <template>
   <div class="novel-comment">
     <div class="novel-comment-box">
+      <!-- 评论区标题 -->
       <div class="novel-comment-title">
-        <span>热门评论</span>
+        <span>这道菜的评论</span>
         <span>共 {{ count }} 条评论</span>
       </div>
-      <div class="novel-comment-content" @click="showPopup(true)" >
+      <!-- 输入框 -->
+      <div class="novel-comment-content" @click="showPopup(true)">
         <comment theme="outline" size="0.32rem" fill="#000" strokeLinejoin="bevel" strokeLinecap="square"/>
-        <span>一起来评论吧 ~~</span>
+        <span>听说喜欢评论的人做饭会变好吃！</span>
       </div>
     </div>
+    <!-- 评论列表 -->
     <div class="novel-comment-list">
       <NovelCommentItem
-        :comment_id="item.id"
+        :comment_id="item.comment_id"
         :user-id="item.user_id"
-        :content="item.comment_content"
-        :time="item.createdAt"
-        :praise="item.comment_praise"
+        :content="item.content"
+        :time="item.publish_time"
+        :praise="item.likes"
         :reply-count="item.reply_count"
         :nickname="item.nickname"
         :pic-url="item.picture"
+        :is-comment-reply="true"
         v-for="item in commentList"
+        :key = "item"
         @onShowReply="onShowReply"
       >
       </NovelCommentItem>
       <van-empty description="暂无评论" v-if="isNull" />
     </div>
     <var-popup position="bottom" v-model:show="isPopup">
+      <!-- 底部输入框 -->
       <div class="novel-comment-from">
         <div class="novel-comment-input">
           <textarea
@@ -44,6 +50,7 @@
         </div>
       </div>
     </var-popup>
+    <!-- 回复 -->
     <var-popup position="right" v-model:show="isReply">
       <div class="novel-reply-box">
         <div class="novel-reply-title">
@@ -71,15 +78,17 @@
         <van-empty description="暂无回复" v-if="replyCount === 0" />
         <div class="novel-reply-list" ref="novelReplyList" v-else>
           <NovelCommentItem
+            :comment_id="item.reply_id"
             :user-id="item.user_id"
-            :content="item.comment_content"
-            :time="item.createdAt"
-            :praise="item.comment_praise"
+            :content="item.content"
+            :time="item.publish_time"
+            :praise="item.likes"
             :is-comment-count="false"
             :is-comment-reply="false"
             :nickname="item.nickname"
             :pic-url="item.picture"
             v-for="item in replyList"
+            :key = "item"
           >
           </NovelCommentItem>
         </div>
@@ -100,9 +109,9 @@ import NovelCommentItem from "@/components/Novel/NovelCommentItem.vue";
 import { addComment, getComment, getReplyComment, replyComment } from "@/api/novel";
 import { onMounted, ref } from "vue";
 import { Snackbar } from "@varlet/ui"
-
+const user_id = localStorage.getItem("user_id");
 const props = defineProps({
-  id: {
+  recipe_id: {
     type: Number,
     default: 0
   },
@@ -125,6 +134,7 @@ const mainCommentId = ref(0)// 主评论id,
 const flag = ref(true)
 
 onMounted(() => {
+  console.log("onmount")
   // 默认清除之前的数据
   commentList.value = []
   count.value = 0
@@ -149,11 +159,18 @@ function changeValue(e) {
     inputHeight.value = 100 // 重置评论框高度
   }
 }
-
+// 初始化评论
+async function initComment() {
+  const res = await getComment(1)
+  if (res.status !== 200) return Snackbar.warning("请登录")
+  isNull.value = false
+  commentList.value = res.data
+  count.value = res.data.length
+}
 // 发表评论
 async function sendComment() {
   // 进行回复评论和发表评论
-  const res = flag.value ? await addComment(props.id, commentValue.value) : await replyComment(mainCommentId.value, commentValue.value)
+  const res = flag.value ? await addComment(props.recipe_id, user_id, commentValue.value) : await replyComment(mainCommentId.value, user_id, commentValue.value)
   // 判断用户是否登录
   if (res.status === 401) {
     Snackbar.warning('请登录')
@@ -164,27 +181,23 @@ async function sendComment() {
   }
   if (res.status !== 200) return
   Snackbar.success(res.message)
-  setTimeout(() => {
-    window.location.reload()
-  }, 500)
-}
-
-// 初始化评论
-async function initComment() {
-  const res = await getComment(props.id)
-  if (res.status !== 200) return Snackbar.warning("请登录")
-  if (res.data.list.length === 0) return isNull.value = true
-  isNull.value = false
-
-  commentList.value = res.data.list
-  count.value = res.data.count
+  // setTimeout(() => {
+  //   window.location.reload()
+  // }, 500)
+  if(flag.value){
+    initComment()
+  }
+  else{
+    onShowReply(mainCommentId.value)
+  }
 }
 
 // 显示popup
 function showPopup(show) {
+  console.log("showPopup触发了", show);
   if (show) {
     iptConfig.value = {
-      placeholder: '一起来评论吧 ~~',
+      placeholder: '听说喜欢评论的人做饭会变好吃！',
       btnText: '发表评论'
     }
   } else {
@@ -193,7 +206,6 @@ function showPopup(show) {
       btnText: '回复评论'
     }
   }
-
   isPopup.value = true
   flag.value = show
 }
@@ -203,8 +215,8 @@ async function onShowReply(id, count) {
   const res = await getReplyComment(id)
   if (res.status !== 200 && res.status !== 204) return Snackbar.error(res.message)
   replyList.value = res.data
-
-  replyCount.value = count
+  console.log("replyList", replyList)
+  replyCount.value = res.data.length
   isReply.value = true
   mainCommentId.value = id
 }
@@ -224,7 +236,7 @@ async function onShowReply(id, count) {
       display: flex;
       align-items: center;
       border-radius: 50px;
-      border: 1px solid #eee;
+      border: 1px solid #e3e3e3;
       margin-top: 10px;
       padding: 10px 0;
       :deep(.i-icon) {
@@ -233,6 +245,7 @@ async function onShowReply(id, count) {
       span {
         font-size: 18px;
         padding-right: 15px;
+        color: rgb(139, 139, 139);
       }
     }
   }

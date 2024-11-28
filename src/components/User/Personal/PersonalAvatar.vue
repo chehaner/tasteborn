@@ -2,7 +2,7 @@
   <div class="personal-avatar-item">
     <div class="personal-avatar-content" v-ripple="{ color: '#aaa' }" @click.stop="show = true">
       <div class="personal-avatar-left">
-        <span class="user-picture">{{ name }}</span>
+        <span class="user-picture">头像</span>
       </div>
       <div class="personal-avatar-right">
         <img :src="imgInfo" alt="">
@@ -10,7 +10,7 @@
       </div>
     </div>
     <var-dialog
-      title="昵称修改"
+      title="头像修改"
       v-model:show="show"
       confirm-button-text-color="#ff3992"
       cancel-button-text-color="#ff3992"
@@ -21,10 +21,9 @@
         <var-uploader
           v-model="files"
           :maxlength="1"
-          :maxsize="1024 * 1024 * 2"
+          :maxsize="1024*1024*2"
           @oversize="uploadInfo"
         />
-        <var-image :src="imgInfo" />
       </div>
     </var-dialog>
     <ResultDialog :show="isResultDialog" description="您的头像已经修改成功了!!"></ResultDialog>
@@ -38,9 +37,9 @@ import ResultDialog from "@/components/Common/ResultDialog.vue";
 import {computed, ref} from "vue";
 import {Snackbar} from "@varlet/ui";
 import {useStore} from "vuex";
-
+import COS from 'cos-js-sdk-v5';
 const props = defineProps({
-  name: {
+  username: {
     type: String,
     default: ""
   },
@@ -53,31 +52,49 @@ const props = defineProps({
 const show = ref(false)
 const files = ref([])
 const isResultDialog = ref(false)
-
 // 确认修改头像
-async function onChangeAvatar() {
-  if (files.value.length === 0) return Snackbar.error('上传图片不能为空')
-
-  const typeAry = ['.jpg', '.png', '.bmp', '.JPG', '.PNG', '.BMP', '.gif', '.GIF', '.jpeg', '.JPEG', '.webp', '.WEBP'];
-  const type = files.value[0].name.substring(files.value[0].name.lastIndexOf('.'));
-  const isImage = typeAry.indexOf(type) > -1;
-  // 判断是否上传的是图片
-  if (!isImage) {
-    files.value = []
-    return Snackbar.error('上传文件必须为图片')
+function onChangeAvatar() {
+  console.log("files", files);
+  if (files.value.length === 0) {
+    Snackbar.warning('请选择文件上传');
+    return;
   }
-  // 拿到上传的文件
-  const data = new FormData
-  // 创建一个表单数据
-  data.append("file", files.value[0].file)
 
-  // 发起修改请求
-  const res = await updateAvatar(data)
-  if (res.status !== 200) return Snackbar.error(res.message)
-  setTimeout(() => {
-    isResultDialog.value = true
-  }, 400)
+  // 提取实际的 File 对象
+  const originalFile = files.value[0].file;
+  console.log("originalFile", originalFile);
+
+  // 创建一个新的 File 实例，设置新的名称
+  const renamedFile = new File([originalFile], `${props.username}.png`, {
+    type: originalFile.type,
+    lastModified: originalFile.lastModified
+  });
+
+  console.log("renamedFile", renamedFile);
+
+  const cos = new COS({
+    SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
+    SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'
+  });
+
+  cos.putObject({
+    Bucket: 'test3-1331403891',
+    Region: 'ap-guangzhou',
+    Key: renamedFile.name,
+    StorageClass: 'STANDARD',
+    Body: renamedFile, // 使用新的 File 对象
+  }, (err, data) => {
+    if (err) {
+      console.error('Upload Error:', err);
+      Snackbar.error('上传失败');
+    } else if (data.statusCode === 200 && data.Location) {
+      const fileUrl = `https://${data.Location}`;
+      console.log("File uploaded successfully:", fileUrl);
+      Snackbar.success('上传成功');
+    }
+  });
 }
+
 
 // 上传大小限制
 function uploadInfo() {

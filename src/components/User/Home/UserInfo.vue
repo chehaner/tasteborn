@@ -1,7 +1,7 @@
 <template>
   <div class="user-info">
     <div class="user-pic">
-      <img src="@/assets/images/avatar.png" alt="" v-if="!picUrl">
+      <img src="@/assets/images/image4.png" alt="" v-if="!picUrl">
       <img :src="picUrl" alt="" v-else>
     </div>
     <div class="user-right">

@@ -13,9 +13,20 @@
       <div class="novel-comment-time">
         {{ timeUpdate() }}
       </div>
+      <!-- 点赞 -->
       <div class="novel-comment-icon">
-        <div class="novel-comment-like">
-          <thumbs-up theme="outline" size=".3rem" fill="#000" strokeLinejoin="bevel" strokeLinecap="square"/>
+        <div 
+          class="novel-comment-like" 
+          :class="{ active: isLiked }" 
+          @click="handleLike"
+        >
+          <thumbs-up 
+            theme="outline" 
+            size=".3rem" 
+            :fill="isLiked ? '#f00' : '#000'" 
+            strokeLinejoin="bevel" 
+            strokeLinecap="square"
+          />
           <span class="comment-count">{{ praise }}</span>
         </div>
       </div>
@@ -31,8 +42,10 @@
 import moment from "moment";
 import { ThumbsUp } from "@icon-park/vue-next";
 import { Right } from "@icon-park/vue-next";
+import { ref, watch } from 'vue';
+import { updateLike } from '@/api/novel'; // 假设接口函数已定义
 const emit = defineEmits(['onShowReply'])
-
+const isLiked = ref(false); // 是否已点赞
 const props = defineProps({
   comment_id: {
     type: Number,
@@ -75,7 +88,35 @@ const props = defineProps({
     default: ""
   }
 })
+const praise = ref(props.praise); // 点赞数
+// 点赞逻辑
+async function handleLike() {
+  if (isLiked.value) {
+    // 取消点赞
+    const res = props.isCommentReply
+      ? await updateLike("comments", props.comment_id, -1)//取消评论点赞
+      : await updateLike("replies", props.comment_id, -1);//取消回复点赞
 
+    if (res.status === 200) {
+      praise.value--;
+      isLiked.value = false;
+    } else {
+      console.error('取消点赞失败:', res.message);
+    }
+  } else {
+    // 点赞
+    const res = props.isCommentReply
+      ? await updateLike("comments", props.comment_id, 1)//评论点赞
+      : await updateLike("replies", props.comment_id, 1);//回复点赞
+
+    if (res.status === 200) {
+      praise.value++;
+      isLiked.value = true;
+    } else {
+      console.error('点赞失败:', res.message);
+    }
+  }
+}
 // 初始化时间
 function timeUpdate() {
   return moment(props.time).format('YYYY-MM-DD h:mm:ss')

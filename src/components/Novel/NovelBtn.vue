@@ -4,14 +4,18 @@
       <star theme="outline" size="24" :fill="isCollect ? '#ff3992' : '#333'" strokeLinejoin="bevel" strokeLinecap="square"/>
       <span :class="{ 'novel-color': isCollect }">收藏</span>
     </div>
-    <div class="novel-star-btn">
+    <!-- <div class="novel-star-btn">
       <var-button type="primary" color="#ff3992" @click="onRead">开始阅读</var-button>
+    </div> -->
+    <div class="novel-collect-btn">
+      <Comment theme="outline" size="24" :fill="isCollect ? '#ff3992' : '#333'" strokeLinejoin="bevel" strokeLinecap="square"/>
+      <span :class="{ 'novel-color': isCollect }">评论</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Star } from "@icon-park/vue-next";
+import { Comment, Star } from "@icon-park/vue-next";
 import { Dialog } from '@varlet/ui'
 import { addCollect, addHistory, cancelCollect, getUserCollect } from "@/api/novel";
 import {onMounted, ref} from "vue";
@@ -37,7 +41,8 @@ const router = useRouter()
 onMounted(() => {
   const token = localStorage.getItem('token')
   if (token) {
-    isUserCollect()
+    ///////////////////////////////////////////
+    // isUserCollect()
   }
 })
 
