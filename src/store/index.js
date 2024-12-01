@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    picUrl: "http://localhost:3000",
+    picUrl: "http://10.252.114.79:3000",
     plateUrl: "https://images.sanyeex.top/novelPicture/",
     tabBarShow: true,
     searchScroll: 0,

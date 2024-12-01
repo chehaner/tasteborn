@@ -1,6 +1,7 @@
 <template>
   <div id="home">
     <HomeTabBar />
+    <HomeMenuBar />
     <HomeDaily />
     <BottomTab :active="0" />
   </div>
@@ -8,11 +9,9 @@
 
 <script name="Home" setup>
 import HomeTabBar from "@/components/Home/HomeTabBar.vue";
-import HomeSwiper from "@/components/Home/HomeSwiper.vue";
 import HomeDaily from "@/components/Home/HomeDaily.vue";
-import HomeRecommend from "@/components/Home/HomeRecommend.vue";
-import HomeLibrary from "@/components/Home/HomeLibrary.vue";
 import BottomTab from "@/components/Common/BottomTab.vue";
+import HomeMenuBar from "@/components/Home/HomeMenuBar.vue";
 </script>
 
 <style scoped lang="scss">
