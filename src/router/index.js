@@ -14,6 +14,22 @@ const routes = [
     component: () => import("@/views/Home/Home.vue")
   },
   {
+    path: '/blogs',
+    name: "Blogs",
+    meta: {
+      title: '动态-厨因味来'
+    },
+    component: () => import("@/views/Blogs/blogs.vue")
+  },
+  {
+    path: '/blogs/item',
+    name: "Blogsitem",
+    meta: {
+      title: '动态内容-厨因味来'
+    },
+    component: () => import("@/views/Blogs/Item/item.vue")
+  },
+  {
     path: '/library',
     meta: {
       title: '分类-厨因味来'
@@ -148,7 +164,7 @@ const routes = [
       title: '创建动态-厨因味来'
     },
     component: () => import("@/views/Create/Blog/blog.vue")
-  },
+  }
   // {
   //   path: '/404',
   //   name: '404',

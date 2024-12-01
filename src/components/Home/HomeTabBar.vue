@@ -18,8 +18,7 @@ import { Search } from "@icon-park/vue-next";
 <style scoped lang="scss">
 .home-tab-bar {
   padding: 15px;
-  background-color: rgb(255, 255, 255);
-  
+  background-color: rgb(255, 255, 255); 
   .home-tab {
     display: flex;
     align-items: center;

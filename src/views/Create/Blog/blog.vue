@@ -57,6 +57,17 @@
         placeholder="分享你的下厨心得、生活点滴~"
         rows="10"
       ></textarea>
+
+      <!-- 引用菜谱部分 -->
+    <div v-if="recipe" class="recipe-preview">
+      <div class="recipe-image">
+        <img :src="recipe.image" alt="菜谱图片" />
+      </div>
+      <div class="recipe-info">
+        <h3>{{ recipe.title }}</h3>
+        <p>{{ recipe.description }}</p>
+      </div>
+    </div>
   </template>
   
   <script setup>
@@ -81,6 +92,14 @@ function handleSubmit() {
     alert("请填写内容或选择图片后再发布！");
     return;
   }
+
+  // 如果从菜谱界面跳转过来，接收菜谱数据
+onMounted(() => {
+  const recipeData = route.query.recipe;
+  if (recipeData) {
+    recipe.value = JSON.parse(recipeData);
+  }
+});
 
   // 模拟提交逻辑
   console.log("发布的内容：", content.value);
@@ -222,6 +241,42 @@ function handleFileChange(event) {
   font-size: 22px;
   padding: 5px 10px;
   margin-right: 5px;
+}
+
+/* 引用菜谱部分 */
+.recipe-preview {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.recipe-image {
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  margin-right: 15px;
+}
+
+.recipe-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recipe-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.recipe-info p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
 }
   </style>
   
