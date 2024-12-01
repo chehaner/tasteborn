@@ -28,6 +28,8 @@
       :recipe_id="recipeInfo.recipe_id"
      />
     <NovelBtn
+      :recipe_id="recipeInfo.recipe_id"
+      :star="recipeInfo.stars"
     />
   </div>
 </template>

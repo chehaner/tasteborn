@@ -7,6 +7,7 @@
         :name="item.recipe_name"
         :avatar="item.picture"
         :author_name="item.nickname"
+        :star="item.stars"
       />
     </div>
     <var-loading type="wave" v-if="isLoading" color="#ff3992" />

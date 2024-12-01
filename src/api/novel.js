@@ -28,29 +28,22 @@ export const getRecipeInfo = (recipe_id) => {
 // }
 
 // 获取用户收藏
-export const getUserCollect = (limit = 1, page = 1) => {
-  return request.get('/getCollectList', {
+export const getUserCollect = (recipe_id, user_id) => {
+  return request.get('/getCollect', {
     params: {
-      limit,
-      page
+      recipe_id,
+      user_id
     }
   })
 }
 
-// 添加收藏
-export const addCollect = (novel_id) => {
-  return request.get('/addCollect', {
+// 更新收藏 
+export const updateCollect = (user_id, recipe_id, flag) => { 
+  return request.post('/updateCollect', { 
     params: {
-      novel_id
-    },
-  })
-}
-
-// 取消收藏
-export const cancelCollect = (novel_id) => {
-  return request.get('/cancelCollect', {
-    params: {
-      novel_id
+     user_id, 
+     recipe_id,
+     flag 
     },
   })
 }

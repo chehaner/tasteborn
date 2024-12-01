@@ -45,7 +45,7 @@ initUserInfo()
 
 // 初始化用户信息
 async function initUserInfo() {
-  const userId = localStorage.getItem('userId')
+  const userId = localStorage.getItem('user_id')
   const res = await getUserInfo(userId)
   if (res.status !== 200) {
     setTimeout(() => {

@@ -21,9 +21,9 @@
           @click="handleLike"
         >
           <thumbs-up 
-            theme="outline" 
+            :theme="isLiked ? 'filled' : 'outline'"
             size=".3rem" 
-            :fill="isLiked ? '#f00' : '#000'" 
+            :fill="isLiked ? '#39C5BB' : '#000'" 
             strokeLinejoin="bevel" 
             strokeLinecap="square"
           />
@@ -32,7 +32,7 @@
       </div>
       <div class="novel-comment-reply" v-ripple="{ color: '#d1d1d1' }" @click="showReply()" v-if="isCommentReply">
         共{{ props.replyCount }}条回复
-        <right theme="outline" size=".3rem" fill="#ff3992" />
+        <right theme="outline" size=".3rem" fill="#189a7c" />
       </div>
     </div>
   </div>
@@ -177,7 +177,7 @@ function showReply() {
       padding: 8px 10px;
       background-color: #f1f1f1;
       margin-top: 5px;
-      color: #ff3992;
+      color: #189a7c;
     }
   }
 }

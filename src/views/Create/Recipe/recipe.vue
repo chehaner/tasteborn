@@ -2,7 +2,6 @@
     <div class="recipe-page">
       <!-- 顶部导航栏 -->
       <BackBar title="菜谱创作" />
-  
       <div class="cover-container">
     <!-- 封面图 -->
     <div class="cover-wrapper">
@@ -145,7 +144,8 @@
   import { ref } from "vue";
   import { useRouter } from "vue-router";
   import BackBar from "@/components/Common/BackBar.vue";
-  
+  import { addRecipe } from "@/api/create";
+  import COS from 'cos-js-sdk-v5';
   // 路由实例
   const router = useRouter();
   
@@ -158,12 +158,26 @@
   const steps = ref([{ description: "" }]);
   const selectedCategories = ref([]); // 选中的分类列表
   const categoryOptions = ref([ // 分类选项数据
-  { label: '主食', value: 'main' },
-  { label: '小吃', value: 'snack' },
-  { label: '甜点', value: 'dessert' },
-  { label: '饮品', value: 'drink' },
-  { label: '素食', value: 'vegetarian' },
-  { label: '其他', value: 'others' }
+  { label: '粤菜', value: '1' },
+  { label: '川菜', value: '2' },
+  { label: '湘菜', value: '3' },
+  { label: '鲁菜', value: '4' },
+  { label: '江浙菜', value: '5' },
+  { label: '西北菜', value: '6' },
+  { label: '西式', value: '7' },
+  { label: '日式', value: '8' },
+  { label: '韩式', value: '9' },
+  { label: '东南亚式', value: '10' },
+  { label: '早餐', value: '11' },
+  { label: '午餐', value: '12' },
+  { label: '小食', value: '13' },
+  { label: '晚餐', value: '14' },
+  { label: '夜宵', value: '15' },
+  { label: '婴幼儿', value: '16' },
+  { label: '青少年', value: '17' },
+  { label: '孕妇', value: '18' },
+  { label: '老人', value: '19' },
+  { label: '痛经', value: '20' },
 ]);
   
   // 文件选择器引用
@@ -174,17 +188,38 @@ const selectCover = () => {
   fileInput.value.click();
 };
 
+
 // 处理选中的图片文件
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      coverImage.value = e.target.result; // 更新封面图路径
-    };
-    reader.readAsDataURL(file); // 将图片文件转换为 Base64
+    const fileName = `recipes/${Date.now()}-${file.name}`; // 生成唯一文件名
+    const cos = new COS({
+      SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',   // 替换成你的 SecretId
+      SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'       // 替换成你的 SecretKey
+    });
+
+    cos.putObject({
+      Bucket: 'test3-1331403891',   // 填写你的 COS 桶名称
+      Region: 'ap-guangzhou',       // 填写你的 COS 区域
+      Key: fileName,                // 文件名
+      Body: file,                   // 文件内容
+      ContentType: file.type,       // 文件类型
+    }, (err, data) => {
+      if (err) {
+        console.error('上传失败:', err);
+        alert('上传失败');
+      } else {
+        // console.log('上传成功:', data);
+        const fileUrl = `https://${data.Location}`;
+        // 更新封面图路径
+        coverImage.value = fileUrl;
+      }
+    });
   }
 };
+
+
 
   function addIngredient() {
     ingredients.value.push({ name: "", amount: "" });
@@ -201,9 +236,8 @@ const handleFileChange = (event) => {
   function removeStep(index) {
     steps.value.splice(index, 1);
   }
-  
-  // 处理发布逻辑
-const handlePublish = () => {
+  //////////////////////////////// 发布菜谱
+const handlePublish = async () => {
   if (!recipeTitle.value.trim()) {
     alert("标题不能为空！");
     return;
@@ -212,12 +246,46 @@ const handlePublish = () => {
     alert("步骤不能为空！");
     return;
   }
+  // 拼接用料数据
+  const ingredients_count = ingredients.value.length;
+  const ingredientsData = ingredients.value
+    .map((ingredient) => `${ingredient.name}--${ingredient.amount}`)  // 用 `--` 拼接每个 ingredient 的 name 和 amount
+    .join("*****");  // 用 `*****` 拼接每个 ingredient
 
+  // 拼接做法数据
+  const steps_count = steps.value.length;
+  const stepsData = steps.value
+  .map((step) => step.description) // 提取 description
+  .join("*****");  // 用 '*****' 拼接所有步骤的描述
+  const user_id = localStorage.getItem("user_id");
+  try {
+    // 使用 fetch 发送 POST 请求到后端
+    const result = await addRecipe(
+    coverImage.value,   // 封面图
+    recipeTitle.value,  // 标题
+    description.value,  // 描述
+    ingredientsData,  // 用料
+    ingredients_count,
+    stepsData,        // 做法
+    steps_count,
+    selectedCategories.value,
+    user_id
+  );
 
-  // 发布成功后跳转
-  alert("菜谱发布成功！");
-  router.push("/home");
+    // 后端返回成功的响应
+    if (result.status === 200) {
+      alert("菜谱发布成功！");
+      router.push("/home"); // 发布成功后跳转到主页
+    } else {
+      alert("发布失败，请稍后再试！");
+    }
+  } catch (error) {
+    // 处理错误
+    console.error("发布菜谱失败:", error);
+    alert("发布失败，请稍后再试！");
+  }
 };
+
 
   </script>
   

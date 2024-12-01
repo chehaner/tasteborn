@@ -16,9 +16,7 @@ import SearchHistory from "@/components/Search/SearchHistory.vue";
 
 <style scoped lang="scss">
 #search {
-  padding-top: 1.6rem;
-}
-:deep(.var-app-bar) {
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
 </style>

@@ -4,14 +4,14 @@
       <div class="search-input-top">
         <div class="search-input-left">
           <search theme="outline" size="0.35rem" fill="#000" strokeLinejoin="bevel" strokeLinecap="square"/>
-          <input type="text" placeholder="熊熊勇闯异世界" v-model="iptValue" @keyup.enter="onSearch(iptValue)">
+          <input type="text" placeholder="番茄炒鸡蛋" v-model="iptValue" @keyup.enter="onSearch(iptValue)">
         </div>
         <div class="search-input-right" @click="onEmpty">
           <close-small theme="outline" size="0.35rem" fill="#000" strokeLinejoin="bevel" strokeLinecap="square" v-if="isContent"/>
         </div>
       </div>
       <div class="search-input-bottom" v-show="isContent">
-        <div class="search-input-item" v-for="item in novelList" @click="onSearch(item.name)">
+        <div class="search-input-item" v-for="item in novelList" :key = item @click="onSearch(item.name)">
           {{ item.name }}
         </div>
       </div>
@@ -107,14 +107,12 @@ watch(() => iptValue.value, () => {
 
 <style scoped lang="scss">
 .search-input {
+  margin-top:-70px;
   width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   padding: 0.9rem 12px 10px 12px;
   .search-input-box {
     background-color: #fff;
-    border-radius: 2px;
+    border-radius: 8px;
     padding: 14px 12px;
   }
   .search-input-top {

@@ -1,12 +1,10 @@
 import request from "@/utils/request"
 
 // 搜索小说
-export const getNovelSearch = (name, limit = 10, page = 1) => {
-  return request.get('/novelSearch', {
+export const getSearch = (name) => {
+  return request.get('/getSearch', {
     params: {
-      name,
-      limit,
-      page
+      name
     }
   })
 }

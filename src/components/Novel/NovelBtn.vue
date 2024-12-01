@@ -1,119 +1,119 @@
 <template>
   <div class="novel-btn">
     <div class="novel-collect-btn" @click="addCollectFun">
-      <star theme="outline" size="24" :fill="isCollect ? '#ff3992' : '#333'" strokeLinejoin="bevel" strokeLinecap="square"/>
-      <span :class="{ 'novel-color': isCollect }">收藏</span>
+      <star :theme="isCollect ? 'filled' :'outline'" size="24" :fill="isCollect ? '#189a7c' : '#333'"/>
+      <span :class="{ 'novel-color': isCollect }">{{props.star}}</span>
     </div>
     <!-- <div class="novel-star-btn">
-      <var-button type="primary" color="#ff3992" @click="onRead">开始阅读</var-button>
+      <var-button type="primary" color="#189a7c" @click="onRead">开始阅读</var-button>
     </div> -->
     <div class="novel-collect-btn">
-      <Comment theme="outline" size="24" :fill="isCollect ? '#ff3992' : '#333'" strokeLinejoin="bevel" strokeLinecap="square"/>
-      <span :class="{ 'novel-color': isCollect }">评论</span>
+      <Comment theme="outline" size="22"/>
+      <span>评论</span>
+    </div>
+    <div class="novel-collect-btn">
+      <Camera theme="outline" size="24"/>
+      <span>交作业</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Comment, Star } from "@icon-park/vue-next";
+import { Comment, Star, Camera } from "@icon-park/vue-next";
 import { Dialog } from '@varlet/ui'
-import { addCollect, addHistory, cancelCollect, getUserCollect } from "@/api/novel";
-import {onMounted, ref} from "vue";
+import { updateCollect, addHistory, cancelCollect, getUserCollect } from "@/api/novel";
+import {onMounted, ref, watch} from "vue";
 import { Snackbar } from "@varlet/ui";
 import {useRouter} from "vue-router";
 
 const props = defineProps({
-  id: {
+  recipe_id: {
     type: Number,
     default: 0
   },
-  chapter_id: {
+  star: {
     type: Number,
     default: 0
-  }
+  },
 })
 
 const isCollect = ref(false)
 const isLogin = ref(false)
 
 const router = useRouter()
+const user_id = localStorage.getItem('user_id')
 
-onMounted(() => {
+watch(() => props.recipe_id, () => {
   const token = localStorage.getItem('token')
   if (token) {
-    ///////////////////////////////////////////
-    // isUserCollect()
-  }
-})
+      initCollectCommentData();
+    }
+});
 
 // 判断用户是否已经收藏
-async function isUserCollect() {
-  const res = await getUserCollect()
+async function initCollectCommentData() {
+  const res = await getUserCollect(props.recipe_id, user_id)
   // 判断用户是否登录
   if (res.status === 401) return isLogin.value = false
   if (res.status !== 200 && res.status !== 401 && res.status !== 204) return Snackbar.error(res.message)
 
-  if (res.data.length !== 0) {
-    isCollect.value = res.data.collectIds.some(item => parseInt(item) === parseInt(props.id))
+  if (res.length !== 0) {
+    isCollect.value = res.isFavorited;
   }
-
-  isLogin.value = true
+  console.log("isCollect", isCollect)
 }
 // 添加或取消收藏
 async function addCollectFun() {
   // 判断是否登录
-  if (!isLogin.value) {
-    Snackbar.warning('请登录!')
-    setTimeout(() => {
-      router.push('/user')
-    }, 500)
-    return
-  }
+  // if (!isLogin.value) {
+  //   Snackbar.warning('请登录!')
+  //   setTimeout(() => {
+  //     router.push('/user')
+  //   }, 500)
+  //   return
+  // }
+
+  // 没有收藏
   if (!isCollect.value) {
     // 添加收藏
-    await collectResult('是否确认收藏当前小说', addCollect, true)
-  } else {
+    await updateCollect(user_id, props.recipe_id, 1)
+    isCollect.value = true
+  } 
+  // 已经收藏了
+  else {
     // 取消收藏
-    await collectResult('是否取消确认收藏当前小说', cancelCollect, false)
+    await updateCollect(user_id, props.recipe_id, 0)
+    isCollect.value = false
   }
 }
-// 弹出框
-async function collectResult(message, fun, flag) {
-  await Dialog({
-    title: '确认',
-    message,
-    confirmButtonTextColor: "#ff3992",
-    cancelButtonTextColor: "#ff3992",
-    closeOnClickOverlay: false,
-    // 按下确认或取消按钮
-    async onBeforeClose(action) {
-      if (action === 'confirm') {
-        const res = await fun(props.id)
-        if (res.status !== 200) return Snackbar.error(res.message)
+// // 弹出框
+// async function collectResult(message, fun, flag) {
+//   await Dialog({
+//     title: '确认',
+//     message,
+//     confirmButtonTextColor: "#189a7c",
+//     cancelButtonTextColor: "#189a7c",
+//     closeOnClickOverlay: false,
+//     // 按下确认或取消按钮
+//     async onBeforeClose(action) {
+//       if (action === 'confirm') {
+//         const res = await fun(props.id)
+//         if (res.status !== 200) return Snackbar.error(res.message)
 
-        Snackbar.success(res.message)
-        setTimeout(async () => {
-          // 收藏按钮颜色变化
-          isCollect.value = flag
-          // 关闭窗口
-          await Dialog.close()
-        })
-      } else {
-        // 关闭窗口
-        await Dialog.close()
-      }
-    }
-  })
-}
-// 开始阅读
-async function onRead() {
-  // 添加历史浏览
-  const res = await addHistory(props.id)
-  if (res.status !== 200 && res.status !== 401) return Snackbar.error(res.message)
-  // 跳转网页
-  window.location.href = `/read/${props.chapter_id}`
-}
-
+//         Snackbar.success(res.message)
+//         setTimeout(async () => {
+//           // 收藏按钮颜色变化
+//           isCollect.value = flag
+//           // 关闭窗口
+//           await Dialog.close()
+//         })
+//       } else {
+//         // 关闭窗口
+//         await Dialog.close()
+//       }
+//     }
+//   })
+// }
 </script>
 
 <style scoped lang="scss">
@@ -124,30 +124,25 @@ async function onRead() {
   right: 0;
   width: 100%;
   display: flex;
-  padding: 10px 25px;
-  align-items: center;
+  margin-left: 10px;
+  padding: 15px 0px;
   background-color: #fff;
   z-index: 999;
   .novel-collect-btn {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 10px;
     span {
-      white-space: nowrap;
       font-size: 16px;
-      padding-top: 2px;
-    }
-  }
-  .novel-star-btn {
-    width: 100%;
-    padding-left: 20px;
-    :deep(.var-button) {
-      width: 100%;
     }
   }
 }
+.novel-btn .novel-collect-btn {
+  gap: 10px;
+}
+
 .novel-color {
-  color: #ff3992;
+  color: #189a7c;
 }
 </style>

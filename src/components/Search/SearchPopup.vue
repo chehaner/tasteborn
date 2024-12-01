@@ -21,17 +21,13 @@
         @load="onLoad"
       >
         <LibraryContentItem
-          :key="item.id"
-          :id="item.id"
-          :pic-url="item.picUrl"
-          :name="item.name"
-          :is-animation="item.isAnimation"
-          :intro="item.intro"
-          :author="item.author"
+          :key="item.recipe_id"
+          :id="item.recipe_id"
+          :pic-url="item.img"
+          :name="item.recipe_name"
+          :author="item.nickname"
           :tags="item.classTags"
-          :is-serial="item.isSerial"
-          :is-tags="true"
-          @click="onLink(item.id)"
+          @click="onLink(item.recipe_id)"
           v-for="item in searchList"
         >
         </LibraryContentItem>
@@ -42,7 +38,7 @@
 
 <script setup>
 import LibraryContentItem from "@/components/Library/LibraryContentItem.vue";
-import { getNovelSearch } from "@/api/search";
+import { getSearch } from "@/api/search";
 import {computed, onActivated, ref, watch} from "vue";
 import {Snackbar} from "@varlet/ui";
 import {useRouter} from "vue-router";
@@ -86,7 +82,7 @@ async function initNovelSearch() {
   loading.value = true // loading 默认不加载
   finished.value = false // finished 默认显示加载未完成
 
-  const res = await getNovelSearch(props.iptValue, limit.value, page.value)
+  const res = await getSearch(props.iptValue)
   // 判断搜索结果是否为空
   if (res.status === 403)  {
     finished.value = true
@@ -95,12 +91,13 @@ async function initNovelSearch() {
   }
   if (res.status !== 200) return Snackbar.error(res.message)
   // 处理tag标签
-  const newArr = []
-  res.data.list.forEach(item => {
-    item.classTags = item.classTags.splice(0, 4)
-    newArr.push(item)
-  })
-  searchList.value = [...searchList.value, ...res.data.list]
+  // const newArr = []
+  // res.data.forEach(item => {
+  //   item.classTags = item.classTags.splice(0, 4)
+  //   newArr.push(item)
+  // })
+  // 这里赋值
+  searchList.value = res.data
   setTimeout(() => {
     loading.value = false
   }, 1000)
@@ -124,7 +121,7 @@ function onLink(id) {
   const searchScroll = searchListElement.value.scrollTop
   store.commit('setSearchScroll', searchScroll)
   router.push({
-    path: `/novel/${id}`,
+    path: `/recipes/${id}`,
   })
 }
 

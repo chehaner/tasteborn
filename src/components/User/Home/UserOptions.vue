@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { User, Right, DocumentFolder, Comment, SmilingFace, Info, History, Bookshelf } from "@icon-park/vue-next";
+import { User, Right, DocumentFolder, Star,Comment, SmilingFace, Info, History, Bookshelf } from "@icon-park/vue-next";
 import {ref} from "vue";
 import { useRouter } from "vue-router";
 
@@ -21,8 +21,9 @@ const router = useRouter()
 
 const userOptionsList = ref([
   { name: "个人中心", icon: User, path: '/user/personal' },
-  { name: "历史浏览", icon: History, path: '/user/history' },
-  { name: "我的收藏", icon: DocumentFolder, path: '/user/collect' },
+  { name: "我的浏览", icon: History, path: '/user/history' },
+  { name: "我的收藏", icon: Star, path: '/user/collect' },
+  { name: "我的创作", icon: DocumentFolder, path: '/user/collect' },
   // { name: "我的评论", icon: Comment, path: '/user/comment' },
   // { name: "问题反馈", icon: SmilingFace, path: '/user/feedback' },
   // { name: "求书", icon: Bookshelf, path: '/user/request' },

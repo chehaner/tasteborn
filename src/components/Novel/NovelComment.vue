@@ -107,7 +107,7 @@
 import { Comment, Send, CloseSmall } from "@icon-park/vue-next";
 import NovelCommentItem from "@/components/Novel/NovelCommentItem.vue";
 import { addComment, getComment, getReplyComment, replyComment } from "@/api/novel";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { Snackbar } from "@varlet/ui"
 const user_id = localStorage.getItem("user_id");
 const props = defineProps({
@@ -132,7 +132,6 @@ const count = ref(0)// 一个有几条评论
 const replyCount = ref(0)// 回复评论数量
 const mainCommentId = ref(0)// 主评论id,
 const flag = ref(true)
-
 onMounted(() => {
   console.log("onmount")
   // 默认清除之前的数据
@@ -140,10 +139,10 @@ onMounted(() => {
   count.value = 0
   inputHeight.value = 100
   commentValue.value = ""
-  // 获取数据
-  initComment()
 })
-
+watch(() => props.recipe_id, () => {
+  initComment()
+  });
 // textarea自适应高度
 function changeValue(e) {
   const height = 500
@@ -161,7 +160,7 @@ function changeValue(e) {
 }
 // 初始化评论
 async function initComment() {
-  const res = await getComment(1)
+  const res = await getComment(props.recipe_id)
   if (res.status !== 200) return Snackbar.warning("请登录")
   isNull.value = false
   commentList.value = res.data

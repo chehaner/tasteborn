@@ -10,13 +10,13 @@
         @click="routerJump(item.url)"/> -->
       <var-bottom-navigation-item label='首页' icon='home' @click="routerJump('/')"></var-bottom-navigation-item>
       <!-- <var-bottom-navigation-item label='分类' icon='notebook' @click="routerJump('/library')"></var-bottom-navigation-item> -->
-      <var-bottom-navigation-item @click="routerJump('/create')"></var-bottom-navigation-item>
+      <var-bottom-navigation-item label='创建' icon='plus-circle' @click="routerJump('/create')"></var-bottom-navigation-item>
       <!-- <var-bottom-navigation-item label='动态' icon='radio-marked' @click="routerJump('/')"></var-bottom-navigation-item> -->
       <var-bottom-navigation-item label='我的' icon='account-circle' @click="routerJump('/user')"></var-bottom-navigation-item>
     </var-bottom-navigation>
-    <div class="floating-create-button" @click="routerJump('/create')">
+    <!-- <div class="floating-create-button" @click="routerJump('/create')">
       <var-icon name="plus-circle" size="44"></var-icon>
-    </div>
+    </div> -->
   </div>
 </template>
 

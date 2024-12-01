@@ -8,17 +8,25 @@
     <div class="home-item-name">
       {{ name }}
     </div>
-    <!-- 作者 -->
+    <!-- 作者+收藏 -->
     <div class="novel-header-author">
-      <!-- 作者头像 -->
-      <img class="author-avatar" :src="props.avatar" alt="用户头像" />
-      <!-- 作者昵称 -->
-      <span class="author-nickname">{{ props.author_name }}</span>
+      <div>
+        <!-- 作者头像 -->
+        <img class="author-avatar" :src="props.avatar" alt="用户头像" />
+        <!-- 作者昵称 -->
+        <span class="author-nickname">{{ props.author_name }}</span>
+      </div>
+      <!-- 收藏 -->
+      <div class="star-container">
+        <Star theme="outline" size="17" class="star-icon" />
+        <span class="star-text">{{props.star}}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { Star } from "@icon-park/vue-next";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { computed } from "vue";
@@ -49,10 +57,10 @@ const props = defineProps({
     type: String,
     default: "匿名用户"
   },
-  // tags: {
-  //   type: Array,
-  //   default: []
-  // }
+  star: {
+    type: Number,
+    default: 0
+  },
 })
 function picUrlSplice() {
   const url = `${storePicUrl.value}/images/${props.img}`
@@ -107,11 +115,14 @@ function onLink() {
   }
   .novel-header-author {
   display: flex;
+  justify-content: space-between; 
   align-items: center;
   margin-top: 10px;
-  gap: 8px;
 }
-
+.novel-header-author > div {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+}
 /* Author avatar */
 .author-avatar {
   width: 32px;
@@ -123,8 +134,27 @@ function onLink() {
 
 /* Author nickname */
 .author-nickname {
-  font-size: 14px;
+  font-size: 18px;
+  margin-left:8px;
   color: #555;
   font-weight: 400;
 }
+/* 设置收藏容器的样式 */
+.star-container {
+  display: flex;
+  align-items: center;  /* 垂直居中对齐 */
+  margin-right:10px;
+}
+/* 设置图标颜色为浅灰 */
+.star-icon {
+  color: #646566;
+  margin-right:5px;
+}
+
+/* 调整 star 和 span 之间的距离 */
+.star-text {
+  font-size: 18px;  /* 设置 span 字体为小一些 */
+  color:#646566;
+}
+
 </style>
