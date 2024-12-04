@@ -13,3 +13,19 @@ export const addRecipe = ( img, recipe_name, content, ingredients, ingredients_c
         user_id
     })
   }
+  // 添加菜谱
+export const addBlog = ( user_id, content, images, refer_id ) => {
+    return request.post('/addBlog', {
+        user_id, 
+        content, 
+        images,
+        refer_id
+    })
+  }
+
+  export const getHomeWork = (recipe_id) => {
+    return request.get('/getHomeWork', {
+      params: { recipe_id }  // 将 recipe_id 作为查询参数传递
+    });
+  }
+  

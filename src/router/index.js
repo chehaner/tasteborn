@@ -22,12 +22,12 @@ const routes = [
     component: () => import("@/views/Blogs/blogs.vue")
   },
   {
-    path: '/blogs/item',
+    path: '/blogs/item/:blog_id',
     name: "Blogsitem",
     meta: {
       title: '动态内容-厨因味来'
     },
-    component: () => import("@/views/Blogs/Item/item.vue")
+    component: () => import("@/components/Blogs/Item/item.vue")
   },
   {
     path: '/library',

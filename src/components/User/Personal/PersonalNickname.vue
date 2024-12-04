@@ -12,12 +12,12 @@
     <var-dialog
       title="昵称修改"
       v-model:show="show"
-      confirm-button-text-color="#ff3992"
-      cancel-button-text-color="#ff3992"
+      confirm-button-text-color="#189a7c"
+      cancel-button-text-color="#189a7c"
       @confirm="onChangeNickname"
       :close-on-click-overlay="false"
     >
-      <var-input placeholder="请输入新的昵称" v-model="value" focus-color="#ff3992" text-color="#000" />
+      <var-input placeholder="请输入新的昵称" v-model="value" focus-color="#39C5BB" text-color="#000" />
     </var-dialog>
     <ResultDialog :show="isResultDialog" description="您的昵称已经修改成功了!!"></ResultDialog>
   </div>
@@ -25,7 +25,7 @@
 
 <script setup>
 import { Right } from "@icon-park/vue-next";
-import { updateUserInfo } from "@/api/user";
+import { updateNickname, updateUserInfo } from "@/api/user";
 import ResultDialog from "@/components/Common/ResultDialog.vue";
 import {ref, watch} from "vue";
 import {Snackbar} from "@varlet/ui";
@@ -48,7 +48,8 @@ const isResultDialog = ref(false)
 // 发起修改昵称请求
 async function onChangeNickname() {
   if (!value.value) return Snackbar.warning('输入框不能为空')
-  const res = await updateUserInfo(value.value)
+  const user_id = localStorage.getItem('user_id')
+  const res = await updateNickname(user_id, value.value)
   if (res.status !== 200) return Snackbar.error(res.message)
   setTimeout(() => {
     isResultDialog.value = true

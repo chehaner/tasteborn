@@ -1,32 +1,28 @@
 <template>
   <div class="library-content-item" @click.stop="onLink">
+    <!-- 菜谱图片 -->
     <div class="library-content-img">
-      <img v-lazy="picUrlSplice()" class="shadow" alt="">
+      <img v-lazy=props.picUrl class="shadow" alt="">
     </div>
     <div class="library-content-info">
+      <!-- 菜谱名 -->
       <div class="library-content-top">
         <div class="library-content-name">
           {{ name }}
         </div>
-        <div class="library-content-animation" v-if="isAnimation">
-          动画化
-        </div>
       </div>
-      <div class="library-content-intro">
-        {{ intro.toString().replace(/\s+/g, '') }}
-      </div>
-      <div class="library-content-bottom">
-        <div class="library-content-author">
-          {{ author }}
+      <!-- 作者+收藏 -->
+      <div class="novel-header-author">
+        <div>
+          <!-- 作者头像 -->
+          <img class="author-avatar" :src="props.avatar" alt="用户头像" />
+          <!-- 作者昵称 -->
+          <span class="author-nickname">{{ props.author }}</span>
         </div>
-        <div class="library-content-bottom-right">
-          <div class="library-content-tags">
-            <div class="library-content-tag" v-for="tag in tags" v-if="isTags">{{ tag }}</div>
-            <div class="library-content-tag" v-for="tag in tagsSplice(tags)" v-else>{{ tag }}</div>
-          </div>
-          <div class="library-content-serial">
-            {{ isSerial ? '连载中' : '已完结' }}
-          </div>
+        <!-- 收藏 -->
+        <div class="star-container">
+          <Star theme="outline" size="17" class="star-icon" />
+          <span class="star-text">{{props.stars}}</span>
         </div>
       </div>
     </div>
@@ -34,6 +30,7 @@
 </template>
 
 <script setup>
+import { Star } from "@icon-park/vue-next";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { computed } from "vue";
@@ -48,7 +45,15 @@ const props = defineProps({
     type: Number,
     default: 0
   },
+  stars: {
+    type: Number,
+    default: 0
+  },
   picUrl: {
+    type: String,
+    default: ""
+  },
+  avatar: {
     type: String,
     default: ""
   },
@@ -82,11 +87,6 @@ const props = defineProps({
   }
 })
 
-// 处理图片链接
-function picUrlSplice() {
-  return `${storePicUrl.value}${props.id}/${props.picUrl}`
-}
-
 // 搜索区域tags 显示不正常
 function tagsSplice(tags) {
   return tags.splice(0, 3)
@@ -95,82 +95,98 @@ function tagsSplice(tags) {
 // 跳转路由
 function onLink() {
   router.push({
-    path: `/novel/${props.id}`,
+    path: `/recipes/${props.id}`,
   })
 }
 </script>
 
 <style scoped lang="scss">
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  align-items: center;
+  border-radius: 50%;
+  object-fit: cover; /* 确保头像填充区域 */
+}
+.author-nickname {
+  font-size: 18px;
+  margin-left:8px;
+  color: #555;
+  font-weight: 400;
+}
 .library-content-item {
   display: flex;
-  padding: 15px 10px;
-  border-bottom: 1px solid #eee;
-  .library-content-img img {
-    width: 120px;
-    height: 180px;
-    border-radius: 2px;
-  }
-  .library-content-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding-left: 10px;
-    .library-content-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .library-content-name {
-        font-size: 22px;
-        font-weight: 600;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;    //设置行数
-        overflow: hidden;
-      }
-      .library-content-animation {
-        white-space: nowrap;
-        font-size: 18px;
-        color: red;
-        padding-left: 2px;
-      }
-    }
-    .library-content-intro {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;    //设置行数
-      overflow: hidden;        //超出隐藏
-      font-size: 20px;
-      color: #666;
-    }
-    .library-content-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .library-content-author {
-        font-size: 18px;
-        color: #666;
-      }
-      .library-content-bottom-right {
-        display: flex;
-        align-items: center;
-        .library-content-tags {
-          display: flex;
-          border: 1px solid #ff3992;
-          border-radius: 2px;
-          padding: 0 2px;
-          .library-content-tag {
-            font-size: 16px;
-            color: #ff3992;
-            padding: 2px 0 2px 5px;
-          }
-        }
-        .library-content-serial {
-          font-size: 16px;
-          color: #1E90FF;
-          padding-left: 8px;
-        }
-      }
-    }
-  }
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
 }
+
+.library-content-img {
+  flex-shrink: 0;
+  width: 80px;
+  height: 100px;
+  margin-right: 16px;
+  margin-left:16px;
+}
+
+.library-content-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.library-content-info {
+  flex-grow: 1;
+}
+
+.library-content-top {
+  margin-bottom: 8px;
+}
+
+.library-content-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.novel-header-author {
+  margin-top:20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.novel-header-author > div {
+  display: flex;
+  align-items: center;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.author-nickname {
+  font-size: 18px;
+  color: #666;
+}
+
+.star-container {
+  display: flex;
+  align-items: center;
+}
+
+.star-icon {
+  margin-right: 4px;
+}
+
+.star-text {
+  font-size: 14px;
+  color: #666;
+}
+
 </style>

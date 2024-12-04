@@ -24,8 +24,10 @@
           :key="item.recipe_id"
           :id="item.recipe_id"
           :pic-url="item.img"
+          :stars="item.stars"
           :name="item.recipe_name"
           :author="item.nickname"
+          :avatar="item.picture"
           :tags="item.classTags"
           @click="onLink(item.recipe_id)"
           v-for="item in searchList"
@@ -37,6 +39,7 @@
 </template>
 
 <script setup>
+
 import LibraryContentItem from "@/components/Library/LibraryContentItem.vue";
 import { getSearch } from "@/api/search";
 import {computed, onActivated, ref, watch} from "vue";
@@ -62,7 +65,7 @@ const page = ref(1)
 const emit = defineEmits(['hidePopup'])
 
 // 初始化搜索内容
-initNovelSearch()
+// initSearch()
 
 const store = useStore()
 
@@ -78,7 +81,7 @@ onActivated(() => {
 })
 
 // 搜索内容初始化
-async function initNovelSearch() {
+async function initSearch() {
   loading.value = true // loading 默认不加载
   finished.value = false // finished 默认显示加载未完成
 
@@ -110,11 +113,11 @@ function onBack() {
   emit('hidePopup')
 }
 
-// 下拉加载
-function onLoad() {
-  page.value++
-  initNovelSearch()
-}
+// // 下拉加载
+// function onLoad() {
+//   page.value++
+//   initSearch()
+// }
 
 // 跳转页面
 function onLink(id) {
@@ -127,7 +130,7 @@ function onLink(id) {
 
 watch(() => props.iptValue, () => {
   page.value = 1
-  initNovelSearch()
+  initSearch()
 })
 </script>
 
@@ -148,5 +151,48 @@ watch(() => props.iptValue, () => {
 }
 :deep(.var-app-bar__toolbar) {
   height: 0.80rem;
+}
+.novel-header-author {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-top: 10px;
+}
+.novel-header-author > div {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+}
+/* Author avatar */
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover; /* 确保头像填充区域 */
+  border: 2px solid #ccc; /* 添加头像边框 */
+}
+
+/* Author nickname */
+.author-nickname {
+  font-size: 18px;
+  margin-left:8px;
+  color: #555;
+  font-weight: 400;
+}
+/* 设置收藏容器的样式 */
+.star-container {
+  display: flex;
+  align-items: center;  /* 垂直居中对齐 */
+  margin-right:10px;
+}
+/* 设置图标颜色为浅灰 */
+.star-icon {
+  color: #646566;
+  margin-right:5px;
+}
+
+/* 调整 star 和 span 之间的距离 */
+.star-text {
+  font-size: 18px;  /* 设置 span 字体为小一些 */
+  color:#646566;
 }
 </style>

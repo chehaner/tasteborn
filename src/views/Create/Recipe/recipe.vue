@@ -146,6 +146,7 @@
   import BackBar from "@/components/Common/BackBar.vue";
   import { addRecipe } from "@/api/create";
   import COS from 'cos-js-sdk-v5';
+import { Snackbar } from "@varlet/ui";
   // 路由实例
   const router = useRouter();
   
@@ -157,7 +158,9 @@
   const ingredients = ref([{ name: "", amount: "" }]);
   const steps = ref([{ description: "" }]);
   const selectedCategories = ref([]); // 选中的分类列表
+  const coverFile = ref(null);
   const categoryOptions = ref([ // 分类选项数据
+  //菜系
   { label: '粤菜', value: '1' },
   { label: '川菜', value: '2' },
   { label: '湘菜', value: '3' },
@@ -168,11 +171,13 @@
   { label: '日式', value: '8' },
   { label: '韩式', value: '9' },
   { label: '东南亚式', value: '10' },
+  //餐次
   { label: '早餐', value: '11' },
   { label: '午餐', value: '12' },
   { label: '小食', value: '13' },
   { label: '晚餐', value: '14' },
   { label: '夜宵', value: '15' },
+  //人群
   { label: '婴幼儿', value: '16' },
   { label: '青少年', value: '17' },
   { label: '孕妇', value: '18' },
@@ -188,34 +193,13 @@ const selectCover = () => {
   fileInput.value.click();
 };
 
-
 // 处理选中的图片文件
 const handleFileChange = (event) => {
+  // console.log("在处理")
   const file = event.target.files[0];
-  if (file) {
-    const fileName = `recipes/${Date.now()}-${file.name}`; // 生成唯一文件名
-    const cos = new COS({
-      SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',   // 替换成你的 SecretId
-      SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'       // 替换成你的 SecretKey
-    });
-
-    cos.putObject({
-      Bucket: 'test3-1331403891',   // 填写你的 COS 桶名称
-      Region: 'ap-guangzhou',       // 填写你的 COS 区域
-      Key: fileName,                // 文件名
-      Body: file,                   // 文件内容
-      ContentType: file.type,       // 文件类型
-    }, (err, data) => {
-      if (err) {
-        console.error('上传失败:', err);
-        alert('上传失败');
-      } else {
-        // console.log('上传成功:', data);
-        const fileUrl = `https://${data.Location}`;
-        // 更新封面图路径
-        coverImage.value = fileUrl;
-      }
-    });
+  if(file){
+    coverFile.value = file; // 保存文件而不是上传
+    coverImage.value = URL.createObjectURL(file); // 预览图像
   }
 };
 
@@ -257,6 +241,37 @@ const handlePublish = async () => {
   const stepsData = steps.value
   .map((step) => step.description) // 提取 description
   .join("*****");  // 用 '*****' 拼接所有步骤的描述
+  // 如果封面图已选择，进行上传
+  if (coverFile.value) {
+    const fileName = `recipes/${recipeTitle.value}`; // 生成唯一文件名
+    const cos = new COS({
+      SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',   // 替换成你的 SecretId
+      SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'       // 替换成你的 SecretKey
+    });
+    try {
+      await new Promise((resolve, reject) => {
+        cos.putObject({
+          Bucket: 'test3-1331403891',   // 填写你的 COS 桶名称
+          Region: 'ap-guangzhou',       // 填写你的 COS 区域
+          Key: fileName,                // 文件名
+          Body: coverFile.value,        // 文件内容
+          ContentType: coverFile.value.type,       // 文件类型
+        }, (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            coverImage.value = `https://${data.Location}`; // 更新封面图路径
+            console.log("上传成功", `https://${data.Location}`)
+            resolve();
+          }
+        });
+      });
+    } catch (err) {
+      console.error('封面图上传失败:', err);
+      alert('封面图上传失败');
+      return;
+    }
+  }
   const user_id = localStorage.getItem("user_id");
   try {
     // 使用 fetch 发送 POST 请求到后端
@@ -271,13 +286,12 @@ const handlePublish = async () => {
     selectedCategories.value,
     user_id
   );
-
     // 后端返回成功的响应
     if (result.status === 200) {
-      alert("菜谱发布成功！");
+      Snackbar.success("菜谱发布成功！")
       router.push("/home"); // 发布成功后跳转到主页
     } else {
-      alert("发布失败，请稍后再试！");
+      Snackbar.success("发布失败，请稍后再试！")
     }
   } catch (error) {
     // 处理错误

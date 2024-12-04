@@ -13,8 +13,6 @@
         </var-button>
       </template>
     </BackBar>
-  
-  
       <!-- 图片选择框 -->
       <div class="image-uploader">
         <div 
@@ -49,7 +47,6 @@
 
       </div>
     </div>
-
     <!-- 文本框 -->
     <textarea 
         v-model="content" 
@@ -57,82 +54,133 @@
         placeholder="分享你的下厨心得、生活点滴~"
         rows="10"
       ></textarea>
-
-      <!-- 引用菜谱部分 -->
-    <div v-if="recipe" class="recipe-preview">
-      <div class="recipe-image">
-        <img :src="recipe.image" alt="菜谱图片" />
+    <!-- 交作业引用菜谱部分 -->
+    <div v-if="recipe_id" class="library-content-item">
+      <!-- 菜谱图片 -->
+      <div class="library-content-img">
+        <img v-lazy=recipeInfo.img class="shadow" alt="">
       </div>
-      <div class="recipe-info">
-        <h3>{{ recipe.title }}</h3>
-        <p>{{ recipe.description }}</p>
+      <div class="library-content-info">
+        <!-- 菜谱名 -->
+        <div class="library-content-top">
+          <div class="library-content-name">
+            {{ recipeInfo.recipe_name }}
+          </div>
+        </div>
+        <!-- 作者+收藏 -->
+        <div class="novel-header-author">
+          <div>
+            <!-- 作者头像 -->
+            <img class="author-avatar" :src="recipeInfo.picture" alt="用户头像" />
+            <!-- 作者昵称 -->
+            <span class="author-nickname">{{ recipeInfo.nickname }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script setup>
+  import { ref, onMounted } from 'vue';
   import { useRouter } from "vue-router";
   import BackBar from "@/components/Common/BackBar.vue";
-  
+  import COS from 'cos-js-sdk-v5';
+  import { addBlog, getHomeWork } from '@/api/create';
+  import { Snackbar } from '@varlet/ui';
+  import { useRoute } from 'vue-router';
   const router = useRouter();
-  
+  const route = useRoute();
+  const recipe_id = route.query.recipe_id;
+  const recipeInfo = ref([]);
   // 文本内容
   const content = ref('');
-  
   // 上传图片数组
   const images = ref([]);
   
   // 最大图片数量
   const maxImages = 9;
-
-  // 发布逻辑
-function handleSubmit() {
-  if (!content.value.trim() && images.value.length === 0) {
-    alert("请填写内容或选择图片后再发布！");
-    return;
-  }
-
-  // 如果从菜谱界面跳转过来，接收菜谱数据
-onMounted(() => {
-  const recipeData = route.query.recipe;
-  if (recipeData) {
-    recipe.value = JSON.parse(recipeData);
-  }
-});
-
-  // 模拟提交逻辑
-  console.log("发布的内容：", content.value);
-  console.log("发布的图片：", images.value);
-
-  // 清空内容和图片
-  content.value = "";
-  images.value = [];
-  alert("发布成功！");
-}
-  
-// 处理图片文件选择
-function handleFileChange(event) {
-  const files = event.target.files;
-
-  // 遍历选中的文件
-  for (let i = 0; i < files.length; i++) {
-    if (images.value.length < maxImages) {
-      const file = files[i];
-      const reader = new FileReader();
-
-      // 读取文件内容并转换为 Base64
-      reader.onload = (e) => {
-        images.value.push(e.target.result); // 将 Base64 添加到 images 数组
-      };
-
-      reader.readAsDataURL(file); // 触发读取
+  onMounted(async () => {
+    console.log("recipe_id", recipe_id)
+  if (recipe_id) {
+    try {
+      console.log("recipe_id", recipe_id)
+      // 发起请求，例如调用 API 获取与该 recipe_id 相关的数据
+      const response = await getHomeWork(recipe_id);
+      recipeInfo.value = response.data;  // 假设返回的数据存储在 response.data 中
+    } catch (error) {
+      console.log(error);
     }
   }
-
-  // 清空 input 的值，避免重复触发同一文件选择
-  event.target.value = null;
-}
+});
+  // 选择图片时
+  function handleFileChange(event) {
+    const files = event.target.files;
+    Array.from(files).forEach((file, index) => {
+      images.value.push(URL.createObjectURL(file));  // 预览图片
+    });
+    event.target.value = null;
+  }
+  
+  // 点击发布按钮时，上传所有图片
+  async function handleSubmit() {
+    if (!content.value.trim() && images.value.length === 0) {
+      Snackbar.warning("请填写内容或选择图片后再发布！");
+      return;
+    }
+  
+    // 上传所有图片
+    try {
+      const user_id = localStorage.getItem('user_id')
+      console.log("images", images.value)
+      const uploadPromises = images.value.map(async (blobUrl, index) => {
+        // 获取实际的文件对象
+        const file = await fetch(blobUrl).then(res => res.blob()).then(blob => new File([blob], `image-${index}.jpg`, { type: blob.type }));
+        // 上传文件
+        return uploadImageToCos(file, index);
+      });
+      const uploadedImages = await Promise.all(uploadPromises);
+      const res = await addBlog(user_id, content.value, uploadedImages, recipe_id);
+      if (res && res.status === 200) {
+        Snackbar.success("动态发布成功！")
+        router.push("/blogs");
+      } else {
+        Snackbar.error("发布失败，请重试！")
+        console.error("发布博客失败:", res);
+      }
+    } catch (error) {
+      console.error("图片上传失败：", error);
+      Snackbar.error("图片上传失败，请稍后再试！");
+    }
+    
+  }
+  
+  // 上传图片到腾讯云
+  function uploadImageToCos(file, i) {
+    console.log("在处理第", i)
+    return new Promise((resolve, reject) => {
+      const fileName = `blogs/${content.value}/${i}`; // 生成唯一文件名
+      const cos = new COS({
+        SecretId:'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
+        SecretKey:'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'
+      });
+  
+      cos.putObject({
+        Bucket: 'test3-1331403891',  // 你的 Bucket 名称
+        Region: 'ap-guangzhou',  // 例如：ap-shanghai
+        Key: fileName,  // 存储文件的路径
+        Body: file,  // 文件内容
+        ContentType: file.type,  // 文件类型
+      }, (err, data) => {
+        if (err) {
+          reject(err);  // 如果上传失败，reject 错误
+        } else {
+          const fileUrl = `https://${data.Location}`;
+          console.log("fileUrl", fileUrl)
+          resolve(fileUrl);  // 如果上传成功，resolve 文件 URL
+        }
+      });
+    });
+  }
 
   // 删除图片
   function deleteImage(index) {
@@ -242,41 +290,63 @@ function handleFileChange(event) {
   padding: 5px 10px;
   margin-right: 5px;
 }
-
-/* 引用菜谱部分 */
-.recipe-preview {
+/* 引用菜谱 */
+.library-content-item {
   display: flex;
-  margin-bottom: 20px;
   padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  margin: 10px;
+  border: 1px solid #ddd; /* 设置边框颜色 */
+  border-radius: 12px; /* 设置圆角 */
 }
 
-.recipe-image {
-  flex-shrink: 0;
-  width: 100px;
+.library-content-img {
+  width: 80px;
   height: 100px;
-  margin-right: 15px;
+  margin-right: 16px;
 }
 
-.recipe-image img {
+.library-content-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
 }
 
-.recipe-info h3 {
-  margin: 0;
-  font-size: 18px;
+.library-content-info {
+  flex-grow: 1;
+}
+
+.library-content-top {
+}
+
+.library-content-name {
+  font-size: 20px;
   font-weight: bold;
+  color: #333;
 }
 
-.recipe-info p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.4;
+.novel-header-author {
+  margin-top:20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.novel-header-author > div {
+  display: flex;
+  align-items: center;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.author-nickname {
+  font-size: 18px;
+  color: #666;
+}
+
   </style>
   

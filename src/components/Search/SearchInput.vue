@@ -2,20 +2,24 @@
   <div class="search-input">
     <div class="search-input-box shadow">
       <div class="search-input-top">
+        <!-- 搜索栏 -->
         <div class="search-input-left">
           <search theme="outline" size="0.35rem" fill="#000" strokeLinejoin="bevel" strokeLinecap="square"/>
           <input type="text" placeholder="番茄炒鸡蛋" v-model="iptValue" @keyup.enter="onSearch(iptValue)">
         </div>
+        <!-- 搜索栏右侧的叉 -->
         <div class="search-input-right" @click="onEmpty">
           <close-small theme="outline" size="0.35rem" fill="#000" strokeLinejoin="bevel" strokeLinecap="square" v-if="isContent"/>
         </div>
       </div>
+      <!-- 搜索预览 -->
       <div class="search-input-bottom" v-show="isContent">
-        <div class="search-input-item" v-for="item in novelList" :key = item @click="onSearch(item.name)">
-          {{ item.name }}
+        <div class="search-input-item" v-for="item in novelList" :key = item @click="onSearch(item.recipe_name)">
+          {{ item.recipe_name }}
         </div>
       </div>
     </div>
+    <!--  -->
     <var-popup position="right" v-model:show="isPopup">
       <SearchPopup @hidePopup="hidePopup" :ipt-value="iptValue"></SearchPopup>
     </var-popup>
@@ -24,7 +28,7 @@
 
 <script setup>
 import { Search, CloseSmall } from "@icon-park/vue-next";
-import { getNovelSearch } from "@/api/search";
+import { getSearch } from "@/api/search";
 import SearchPopup from "@/components/Search/SearchPopup.vue";
 import emitter from "@/utils/emitter";
 import {ref, watch} from "vue";
@@ -44,16 +48,15 @@ emitter.on('onSearch', value => {
 
 // 预搜索内容初始化
 async function initNovelSearch() {
-  const res = await getNovelSearch(iptValue.value, limit.value, page.value)
+  const res = await getSearch(iptValue.value)
   // 判断搜索结果是否为空
   if (res.status === 403)  {
     isContent.value = false
     novelList.value = []
     return
   }
-  if (res.status !== 200) return Snackbar.error(res.message)
   isContent.value = true
-  novelList.value = res.data.list
+  novelList.value = res.data
 }
 
 // 清空搜索框
@@ -64,6 +67,7 @@ function onEmpty() {
 
 // 按下搜索关键词
 function onSearch(value) {
+  console.log("123456")
   if (!value) return Snackbar.error('搜索框不能为空')
   isPopup.value = true
   iptValue.value = value

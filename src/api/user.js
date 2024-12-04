@@ -19,24 +19,25 @@ export const getUserInfo = (user_id) => {
 }
 
 // 修改用户信息
-export const updateUserInfo = (nickname) => {
-  return request.post('/updateUserInfo', {
+export const updateNickname = (user_id, nickname) => {
+  return request.post('/updateNickname', {
+    user_id,
     nickname,
   })
 }
 
 // 修改用户头像
-export const updateAvatar = (data) => {
-  return request.post('/uploadUserAvatar', data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+export const updateAvatar = (user_id, url) => {
+  return request.post('/updateAvatar', {
+    user_id,
+    url
   })
 }
 
 // 修改用户密码
-export const updatePwd = (historyPwd, password) => {
-  return request.post('/changePwd', {
+export const updatePwd = (user_id, historyPwd, password) => {
+  return request.post('/updatePwd', {
+    user_id,
     historyPwd,
     password
   })

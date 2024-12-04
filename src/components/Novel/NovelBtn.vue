@@ -11,7 +11,7 @@
       <Comment theme="outline" size="22"/>
       <span>评论</span>
     </div>
-    <div class="novel-collect-btn">
+    <div class="novel-collect-btn" @click="navigateToBlogs">
       <Camera theme="outline" size="24"/>
       <span>交作业</span>
     </div>
@@ -86,6 +86,10 @@ async function addCollectFun() {
     isCollect.value = false
   }
 }
+const navigateToBlogs = () => {
+  const recipe_id = props.recipe_id; 
+  router.push({ path: '/create/blog', query: { recipe_id } });
+};
 // // 弹出框
 // async function collectResult(message, fun, flag) {
 //   await Dialog({

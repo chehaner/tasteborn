@@ -9,10 +9,10 @@
       </div>
     </div>
     <var-dialog
-      title="昵称修改"
+      title="密码修改"
       v-model:show="show"
-      confirm-button-text-color="#ff3992"
-      cancel-button-text-color="#ff3992"
+      confirm-button-text-color="#189a7c"
+      cancel-button-text-color="#189a7c"
       @before-close="onChangePwd"
       :closeOnClickOverlay="false"
     >
@@ -23,7 +23,7 @@
           placeholder="请输入旧密码"
           :rules="[v => !!v || '用户名不能为空']"
           v-model="formData.oldPassword"
-          focus-color="#ff3992"
+          focus-color="#39C5BB"
         />
         <var-input
           type="password"
@@ -31,7 +31,7 @@
           placeholder="请输入新密码"
           :rules="[v => !!v || '新密码不能为空']"
           v-model="formData.newPassword"
-          focus-color="#ff3992"
+          focus-color="#39C5BB"
         />
         <var-input
           type="password"
@@ -39,7 +39,7 @@
           placeholder="确认密码"
           :rules="[v => !!v || '确认密码不能为空']"
           v-model="formData.confirmPassword"
-          focus-color="#ff3992"
+          focus-color="#39C5BB"
         />
       </div>
     </var-dialog>
@@ -75,7 +75,8 @@ async function onChangePwd(action) {
     // 判断新密码个确认密码是否正确
     if (pwdForm.newPassword !== pwdForm.confirmPassword) return Snackbar.error('新密码和确认密码不一致')
     // 请求更改密码
-    const res = await updatePwd(pwdForm.oldPassword, pwdForm.newPassword)
+    const user_id = localStorage.getItem('user_id')
+    const res = await updatePwd(user_id, pwdForm.oldPassword, pwdForm.newPassword)
     if (res.status !== 200) return Snackbar.error(res.message)
     setTimeout(() => {
       show.value = false

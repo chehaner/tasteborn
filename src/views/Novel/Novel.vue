@@ -3,7 +3,7 @@
     <NovelBackBar />
     <NovelHeader
       :name="recipeInfo.recipe_name"
-      :pic-url="recipeInfo.picUrl"
+      :pic-url="recipeInfo.img"
       :author_name="recipeInfo.nickname"
       :avatar="recipeInfo.picture"
     />
@@ -67,7 +67,6 @@ onMounted(() => {
 async function initRecipeInfo() {
   const res = await getRecipeInfo(id)
   recipeInfo.value = res.data
-  recipeInfo.value.picUrl = `${"https://test3-1331403891.cos.ap-guangzhou.myqcloud.com/"}${id}${".png"}`
 }
 
 // // 获取小说卷名

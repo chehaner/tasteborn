@@ -15,7 +15,8 @@
     </PersonalNickname>
     <PersonalAvatar
       :username="userInfo.username"
-      :img-info="userInfo.picture">
+      :img-info="userInfo.picture"
+    >
     </PersonalAvatar>
     <PersonalPassword
       name="修改密码"

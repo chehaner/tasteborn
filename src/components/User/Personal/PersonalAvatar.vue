@@ -12,8 +12,8 @@
     <var-dialog
       title="头像修改"
       v-model:show="show"
-      confirm-button-text-color="#ff3992"
-      cancel-button-text-color="#ff3992"
+      confirm-button-text-color="#189a7c"
+      cancel-button-text-color="#189a7c"
       @confirm="onChangeAvatar"
       :close-on-click-overlay="false"
     >
@@ -32,7 +32,7 @@
 
 <script setup>
 import { Right } from "@icon-park/vue-next";
-import { updateAvatar } from "@/api/user";
+import { updateAvatar, getUserInfo } from "@/api/user";
 import ResultDialog from "@/components/Common/ResultDialog.vue";
 import {computed, ref} from "vue";
 import {Snackbar} from "@varlet/ui";
@@ -54,24 +54,14 @@ const files = ref([])
 const isResultDialog = ref(false)
 // 确认修改头像
 function onChangeAvatar() {
-  console.log("files", files);
   if (files.value.length === 0) {
     Snackbar.warning('请选择文件上传');
     return;
   }
 
   // 提取实际的 File 对象
-  const originalFile = files.value[0].file;
-  console.log("originalFile", originalFile);
-
-  // 创建一个新的 File 实例，设置新的名称
-  const renamedFile = new File([originalFile], `${props.username}.png`, {
-    type: originalFile.type,
-    lastModified: originalFile.lastModified
-  });
-
-  console.log("renamedFile", renamedFile);
-
+  const file = files.value[0].file;
+  const fileName = `avatar/${props.username}`;
   const cos = new COS({
     SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
     SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'
@@ -80,17 +70,19 @@ function onChangeAvatar() {
   cos.putObject({
     Bucket: 'test3-1331403891',
     Region: 'ap-guangzhou',
-    Key: renamedFile.name,
-    StorageClass: 'STANDARD',
-    Body: renamedFile, // 使用新的 File 对象
-  }, (err, data) => {
+    Key: fileName,
+    Body: file,
+    ContentType: file.type,
+  }, async (err, data) => {
     if (err) {
       console.error('Upload Error:', err);
       Snackbar.error('上传失败');
     } else if (data.statusCode === 200 && data.Location) {
       const fileUrl = `https://${data.Location}`;
-      console.log("File uploaded successfully:", fileUrl);
+      const user_id = localStorage.getItem('user_id')
+      await updateAvatar(user_id, fileUrl);
       Snackbar.success('上传成功');
+      window.location.reload();
     }
   });
 }

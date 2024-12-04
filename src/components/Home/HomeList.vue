@@ -2,7 +2,7 @@
   <div class="home-item" @click="onLink">
     <!-- 图 -->
     <div class="home-item-img">
-      <img class="shadow" alt="" :src="picUrlSplice()">
+      <img class="shadow" alt="" :src=props.img>
     </div>
     <!-- 标题 -->
     <div class="home-item-name">
