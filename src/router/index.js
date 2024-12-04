@@ -30,6 +30,32 @@ const routes = [
     component: () => import("@/components/Blogs/Item/item.vue")
   },
   {
+    path: '/category',
+    meta: {
+      title: '分类-厨因味来'
+    },
+    name: 'Category',
+    component: () => import("@/views/Category/category.vue"),
+  },
+  {
+    path: '/category/ranking/:title',
+    meta: {
+      title: '分类-排行榜-厨因味来'
+    },
+    name: 'CategoryRanking',
+    component: () => import("@/views/Category/Ranking/ranking.vue"),
+    props:true
+  },
+  {
+    path: '/category/categories/:category',
+    meta: {
+      title: '分类-类别-厨因味来'
+    },
+    name: 'Categories',
+    component: () => import("@/views/Category/Categories/categories.vue"),
+    props:true
+  },
+  {
     path: '/library',
     meta: {
       title: '分类-厨因味来'
