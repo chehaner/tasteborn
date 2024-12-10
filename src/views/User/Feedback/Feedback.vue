@@ -2,8 +2,8 @@
   <div class="user-feedback">
     <BackBar title="意见反馈" route-link="/user" :is-route="true"></BackBar>
     <div class="feedback-form">
-      <var-input placeholder="有什么意见或者建议,请通过意见反馈告诉我们" textarea v-model="value" focus-color="#ff3992" />
-      <var-button type="primary" block color="#ff3992" class="user-feedback-btn">提交</var-button>
+      <var-input placeholder="有什么意见或者建议,请通过意见反馈告诉我们" textarea v-model="value" focus-color="#189a7c" />
+      <var-button type="primary" block color="#189a7c" class="user-feedback-btn">提交</var-button>
     </div>
   </div>
 </template>

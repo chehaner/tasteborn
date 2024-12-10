@@ -9,24 +9,6 @@ export const getRecipeInfo = (recipe_id) => {
   })
 }
 
-// // 获取小说目录
-// export const getNovelRoll = (novel_id) => {
-//   return request.get('/novelRoll', {
-//     params: {
-//       novel_id
-//     }
-//   })
-// }
-
-// // 获取小说章节
-// export const getNovelChapter = (roll_id) => {
-//   return request.get('/novelChapter', {
-//     params: {
-//       roll_id
-//     }
-//   })
-// }
-
 // 获取用户收藏
 export const getUserCollect = (recipe_id, user_id) => {
   return request.get('/getCollect', {
@@ -98,5 +80,13 @@ export const addHistory = (novel_id) => {
     params: {
       novel_id
     }
+  })
+}
+// 添加评分
+export const addRate = ( user_id, recipe_id, rate ) => {
+  return request.post('/addRate', {
+    user_id,      // 用户ID
+    recipe_id,    // 菜谱ID
+    rate          // 评分
   })
 }

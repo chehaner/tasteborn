@@ -2,7 +2,7 @@
     <div class="RecipeInfo">
         <div class="ingredients-header">
             <span>用料</span>
-            <var-button size="small" class="equal-btn">换算</var-button>
+            <!-- <var-button size="small" class="equal-btn">换算</var-button> -->
         </div>
         <!-- 原料表格 -->
         <div class="RecipeIngredient">
@@ -23,10 +23,19 @@
             </div>
         </div>
     </div>
+    <div class="search-history-list">
+      <span>标签：</span>
+      <div class="search-history-item" v-for="item in tags" :key = "item" @click="onSearch(item)">
+        {{ item }}
+      </div >
+    </div>
+    <div class="novel-info-updateTime">
+        最后更新时间: <span>{{ props.publish_time }}</span>
+    </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 const props = defineProps({
     ingredients_count: {
         type: Number,
@@ -41,6 +50,14 @@ const props = defineProps({
         default: 0
     },
     steps: {
+        type: String,
+        default: ""
+    },
+    tags:{
+        type:Array,
+        default:[],
+    },
+    publish_time: {
         type: String,
         default: ""
     },
@@ -159,4 +176,15 @@ const parsedSteps = computed(() => {
 .IngredientTable tbody tr:hover {
     background-color: #f0f0f0;
 }
+.search-history-list {
+    display: flex;
+    flex-wrap: wrap;
+    .search-history-item {
+      padding: 8px 10px;
+      font-size: 18px;
+      background-color: #eee;
+      margin: 8px;
+      border-radius: 2px;
+    }
+  }
 </style>

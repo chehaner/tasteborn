@@ -5,30 +5,30 @@
       
       <!-- 排行第一的菜谱图片 -->
       <div class="top-ranking">
-        <img :src="rankings[0]?.cover" alt="Top Recipe" class="top-image" />
+        <img :src="ranking[0]?.img" alt="Top Recipe" class="top-image" />
       </div>
   
       <!-- 排行榜数据，分为三列展示 -->
     <div class="ranking-detail">
       <ul class="ranking-list">
-        <li v-for="(ranking, index) in rankings" :key="index" class="ranking-item">
+        <li v-for="(ranking, index) in ranking" :key="index" class="ranking-item">
           <div class="ranking-item-sequence">{{ index + 1 }}</div>
           <div class="ranking-item-image">
-            <img :src="ranking.cover" alt="Recipe Image" class="recipe-image" />
+            <img :src="ranking.img" alt="Recipe Image" class="recipe-image" />
           </div>
           <div class="ranking-item-info">
-            <div class="recipe-name">{{ ranking.title }}</div>
+            <div class="recipe-name">{{ ranking.recipe_name }}</div>
 
             <!-- 根据title来动态显示不同的内容 -->
             <div class="favorites-count">
-              <span v-if="title === '收藏榜'">收藏人数：{{ ranking.favoritesCount }}</span>
-              <span v-else-if="title === '评分榜'">评分：{{ ranking.mark }}</span>
+              <span v-if="title === '收藏榜'">收藏人数：{{ ranking.stars }}</span>
+              <span v-else-if="title === '评分榜'">评分：{{ ranking.rate }}</span>
               <span v-else-if="title === '跟做榜'">跟做人数：{{ ranking.follow }}</span>
             </div>
 
             <div class="user-info">
-              <img :src="ranking.creatorAvatar" alt="User Avatar" class="user-avatar" />
-              <span class="user-id">ID: {{ ranking.creatorId }}</span>
+              <img :src="ranking.picture" alt="User Avatar" class="user-avatar" />
+              <span class="user-id">ID: {{ ranking.nickname }}</span>
             </div>
           </div>
         </li>
@@ -45,92 +45,37 @@
   import BackBar from '@/components/Common/BackBar.vue';
   import BottomTab from '@/components/Common/BottomTab.vue';
   import { useRoute } from 'vue-router';
-  
+  import { getCollectRank, getRateRank, getFollowRank } from '@/api/category';
   const route = useRoute();
   const title = route.params.title; // 获取传递过来的 title 参数
-  
-  // 模拟排行榜数据
-  const rankings = ref([]);
-  
-  // 模拟数据加载
+  // 定义动态排行榜数据
+  const ranking = ref([])
+  // const ratingRankings = ref([])
+  // const followRankings = ref([])
   onMounted(() => {
-    // 使用 title 获取对应的排行榜数据
-    rankings.value = getRankingsByTitle(title); // 根据title获取对应排行榜数据
-  });
-  
-  // 根据 title 获取排行榜数据（这里模拟数据）
-  function getRankingsByTitle(title) {
-    // 模拟不同排行榜数据
-    const allRankings = {
-      '收藏榜': [
-        { 
-          title: '菜谱1', 
-          creator: '作者1', 
-          cover: 'https://via.placeholder.com/150', 
-          favoritesCount: 150, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'user1' 
-        },
-        { 
-          title: '菜谱2', 
-          creator: '作者2', 
-          cover: 'https://via.placeholder.com/150', 
-          favoritesCount: 120, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'user2' 
-        },
-        { 
-          title: '菜谱3', 
-          creator: '作者3', 
-          cover: 'https://via.placeholder.com/150', 
-          favoritesCount: 100, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'user3' 
-        },
-        // 更多数据...
-      ],
-      '评分榜': [
-        { 
-          title: '饮品1', 
-          creator: '作者A', 
-          cover: 'https://via.placeholder.com/150', 
-          mark: 9.6, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'userA' 
-        },
-        { 
-          title: '饮品2', 
-          creator: '作者B', 
-          cover: 'https://via.placeholder.com/150', 
-          mark: 9.3, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'userB' 
-        },
-        // 更多数据...
-      ],
-      '跟做榜': [
-        { 
-          title: '饮品1', 
-          creator: '作者A', 
-          cover: 'https://via.placeholder.com/150', 
-          follow: 34, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'userA' 
-        },
-        { 
-          title: '饮品2', 
-          creator: '作者B', 
-          cover: 'https://via.placeholder.com/150', 
-          follow: 22, 
-          creatorAvatar: 'https://via.placeholder.com/50', 
-          creatorId: 'userB' 
-        },
-        // 更多数据...
-      ]
-    };
-  
-    return allRankings[title] || []; // 返回对应排行榜的数据
+    if (title == "收藏榜"){
+      getCollectRankData();
+    }
+    if (title == "评分榜"){
+      getRateRankData();
+    }
+    if (title == "跟做榜"){
+      getFollowRankData();
+    }
+  })
+  async function getCollectRankData() {
+    const res = await getCollectRank();
+    ranking.value = res.data
   }
+  async function getRateRankData() {
+    const res = await getRateRank();
+    ranking.value = res.data
+  }
+  async function getFollowRankData() {
+    const res = await getFollowRank();
+    ranking.value = res.data
+  }
+
   </script>
   
   <style scoped>

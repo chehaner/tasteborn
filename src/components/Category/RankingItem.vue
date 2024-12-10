@@ -3,19 +3,19 @@
     <div class="ranking-content">
       <!-- 第一名菜谱 -->
       <div class="ranking-details">
-        <img :src="rankings[0]?.cover" alt="Cover"/>
+        <img :src="props.rankings[0]?.img" alt="Cover"/>
       </div>
 
       <!-- 排行前三 -->
       <div class="ranking-details">
         <h3>{{ title }}</h3>
         <ul>
-          <li v-for="(ranking, index) in rankings.slice(0, 4)" :key="index" class="ranking-list-item">
+          <li v-for="(ranking, index) in props.rankings.slice(0, 4)" :key="index" class="ranking-list-item">
             <!-- 左侧是序号 -->
             <span class="ranking-index">{{ index + 1 }}</span>
             <!-- 右侧是菜谱名和作者 -->
             <div class="ranking-info">
-              {{ ranking.title }} BY {{ ranking.creator }}
+              {{ ranking.recipe_name }} BY {{ ranking.nickname }}
             </div>
           </li>
         </ul>
@@ -44,7 +44,11 @@ const router = useRouter();
 
 // 跳转到排行榜详情页面
 function goToRankingPage() {
-  router.push({ name: 'CategoryRanking', params: { title: props.title } });
+   setTimeout(() => {
+    router.push({
+      path: `/category/ranking/${props.title}`,
+    });
+  }, 0);
 }
 </script>
 

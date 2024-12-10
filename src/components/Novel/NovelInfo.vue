@@ -1,22 +1,30 @@
 <template>
+  <div class="rating">
+    <span
+      class="star"
+      v-for="star in 5"
+      :key="star"
+      :class="{'active': rating >= star || hoverRating >= star}"
+      @mouseover="hoverRating = star"
+      @mouseleave="hoverRating = 0"
+      @click="setRating(star)"
+    >
+      ★
+    </span>
+    <div class="rating-display">{{ rating }} 星</div>
+    <var-button size="small" class="equal-btn" @click="submitRating">评分</var-button>
+  </div>
   <div class="novel-info">
     <div class="novel-info-content">
       <div class="novel-intro">
         <p>{{ props.intro }}</p>
       </div>
-      <!-- <div class="novel-info-tags">
-        分类: <p v-for="tag in props.classTags" :key="tag">{{ tag }}</p>
-      </div>
-      <div class="novel-info-updateTime">
-        最后更新时间: <span>{{ props.updateTime }}</span>
-      </div> -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { bigNumberTransform } from "@/utils/countManage"
-
+import { addRate } from '@/api/novel';
 const props = defineProps({
   wordCount: {
     type: String,
@@ -41,22 +49,59 @@ const props = defineProps({
   intro: {
     type: String,
     default: []
+  },
+  recipe_id: {
+    type: Number,
+    default: 0
+  },
+  rate: {
+    type: Number,
+    default: 0
   }
 })
 const emit = defineEmits(['onLink'])
+import { ref, watch } from 'vue';
 
-// 处理文字
-function countManage(value) {
-  return bigNumberTransform(parseInt(value))
-}
+const rating = ref(0); // 用户选择的评分
+const hoverRating = ref(0); // 鼠标悬停时的评分
+watch(() => props.rate, (newRate) => {
+  console.log("123")
+  rating.value = newRate;
+});
+// 点击星星时确认评分
+const setRating = (star) => {
+  rating.value = star;
+};
 
-// 跳转链接
-function onLink() {
-  emit('onLink')
-}
+// 提交评分
+const submitRating = async () => {
+  const user_id = localStorage.getItem('user_id')
+  const res = await addRate(user_id, props.recipe_id, rating.value)
+};
 </script>
 
 <style scoped lang="scss">
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:10px;
+}
+
+.star {
+  font-size: 40px;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.2s;
+}
+
+.star.active {
+  color: gold;
+}
+
+.rating-display {
+  margin-left: 10px;
+}
 .novel-info {
   padding: 30px 25px 10px 25px;
   .novel-info-content {
@@ -83,7 +128,7 @@ function onLink() {
       color: #333333;
       span {
         font-weight: normal;
-        color: #ff3992;
+        color: #189a7c;
       }
     }
     .novel-info-tags {
@@ -112,5 +157,15 @@ function onLink() {
       white-space: pre-line;
     }
   }
+}
+.equal-btn {
+    margin-left: 60px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    color: white;
+    background-color: #189a7c;
+    transition: background-color 0.3s ease;
 }
 </style>

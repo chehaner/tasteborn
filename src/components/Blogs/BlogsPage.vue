@@ -23,7 +23,7 @@
       <div class="novel-btn">
         <div class="novel-collect-btn" @click="addCollectFun">
           <thumbs-up :theme="isCollect ? 'filled' :'outline'" size="20" :fill="isCollect ? '#189a7c' : '#333'"/>
-          <span :class="{ 'novel-color': isCollect }">123</span>
+          <span :class="{ 'novel-color': isCollect }"></span>
         </div>
         <div class="novel-collect-btn">
           <Comment theme="outline" size="20"/>

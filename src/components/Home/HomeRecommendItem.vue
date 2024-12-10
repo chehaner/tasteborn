@@ -113,7 +113,7 @@ function onLink() {
       font-size: 16px;
       .recommend-tag {
         padding-right: 5px;
-        color: #ff3992;
+        color: #189a7c;
       }
     }
   }

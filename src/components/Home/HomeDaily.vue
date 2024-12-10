@@ -10,7 +10,7 @@
         :star="item.stars"
       />
     </div>
-    <var-loading type="wave" v-if="isLoading" color="#ff3992" />
+    <var-loading type="wave" v-if="isLoading" color="#189a7c" />
   </div>
 </template>
 <script setup>

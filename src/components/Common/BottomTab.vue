@@ -1,6 +1,6 @@
 <template>
   <div class="bottom-tab">
-    <var-bottom-navigation :active="props.active" fixed safe-area active-color="#147D42">
+    <var-bottom-navigation :active="props.active" fixed safe-area active-color="#189a7c">
       <!-- <var-bottom-navigation-item
         :name="item.name"
         :label="item.name"

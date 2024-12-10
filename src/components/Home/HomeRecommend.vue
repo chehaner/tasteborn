@@ -15,7 +15,7 @@
         :key="item.id"
       >
       </HomeRecommendItem>
-      <var-loading type="wave" v-if="isLoading" color="#ff3992" />
+      <var-loading type="wave" v-if="isLoading" color="#189a7c" />
     </div>
   </div>
 </template>

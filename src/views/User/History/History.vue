@@ -20,6 +20,7 @@
             :tags="item.classTags"
             :is-serial="item.isSerial"
             v-for="item in historyList"
+            :key = item
           >
           </LibraryContentItem>
         </van-list>

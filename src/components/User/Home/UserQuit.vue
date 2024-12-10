@@ -6,8 +6,8 @@
       message="是否退出登录!"
       v-model:show="show"
       @confirm="confirmQuit"
-      confirm-button-text-color="#ff3992"
-      cancel-button-text-color="#ff3992"
+      confirm-button-text-color="#189a7c"
+      cancel-button-text-color="#189a7c"
     />
   </div>
 </template>

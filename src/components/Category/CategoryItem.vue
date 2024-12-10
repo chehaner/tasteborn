@@ -6,7 +6,7 @@
 
     <div class="category-content">
       <div class="category-list">
-        <div v-for="(category, index) in categories" :key="index" class="category" @click="goToCategoryPage(category)">
+        <div v-for="(category, index) in categories" :key="index" class="category" @click="goToCategoryPage(category.value)">
           <img :src="category.image" alt="Category Image" />
           <p>{{ category.name }}</p>
         </div>
@@ -31,10 +31,13 @@ const props = defineProps({
 });
 
 const router = useRouter();
-
 // 跳转到对应类别页面
 function goToCategoryPage(category) {
-  router.push({ name: 'Categories', params: { category: category.name } });
+  setTimeout(() => {
+    router.push({
+      path: `/category/categories/${category}`,
+    });
+  }, 0);
 }
 </script>
 

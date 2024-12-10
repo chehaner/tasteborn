@@ -8,7 +8,7 @@
           <span>书名:</span>
           <input type="text" placeholder="请输入请小说名称">
         </div>
-        <var-button type="primary" color="#ff3992">提交找书</var-button>
+        <var-button type="primary" color="#189a7c">提交找书</var-button>
       </div>
     </div>
   </div>

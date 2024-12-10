@@ -35,11 +35,12 @@
             :name="item.roll_title"
             :roll-chapter-list="item.chapter_list"
             v-for="item in rollArr"
+            :key = "item"
           >
           </NovelDirectoryItem>
         </div>
       </div>
-      <var-loading type="wave" color="#ff3992" v-if="rollArr.length === 0" />
+      <var-loading type="wave" color="#189a7c" v-if="rollArr.length === 0" />
     </var-popup>
   </div>
 </template>

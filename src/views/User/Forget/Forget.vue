@@ -40,7 +40,7 @@
         />
       </van-cell-group>
       <div style="margin: 16px;">
-        <var-button block type="primary" color="#ff3992" @click="onSubmit" native-type="submit">修改密码</var-button>
+        <var-button block type="primary" color="#189a7c" @click="onSubmit" native-type="submit">修改密码</var-button>
       </div>
     </van-form>
   </div>

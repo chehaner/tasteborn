@@ -1,5 +1,5 @@
 <template>
-  <div class="novel-comment-item">
+  <div class="novel-comment-item" @click="showReply()">
     <div class="novel-comment-avatar">
       <img :src="picUrl" alt="">
       <div class="novel-comment-name">
@@ -30,7 +30,7 @@
           <span class="comment-count">{{ praise }}</span>
         </div>
       </div>
-      <div class="novel-comment-reply" v-ripple="{ color: '#d1d1d1' }" @click="showReply()" v-if="isCommentReply">
+      <div class="novel-comment-reply" v-ripple="{ color: '#d1d1d1' }" @click="showReply()" v-if="props.replyCount">
         共{{ props.replyCount }}条回复
         <right theme="outline" size=".3rem" fill="#189a7c" />
       </div>

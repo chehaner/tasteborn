@@ -153,13 +153,13 @@ function reset() {
     width: 100%;
     height: 50px;
     font-size: 20px;
-    background-color: #ff3992;
+    background-color: #189a7c;
     color: #fff;
     border: none;
   }
 }
 .options-active {
-  background-color: #ff3992;
+  background-color: #189a7c;
   color: #fff !important;
 }
 </style>

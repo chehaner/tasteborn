@@ -29,7 +29,6 @@
         @onShowReply="onShowReply"
       >
       </NovelCommentItem>
-      <van-empty description="暂无评论" v-if="isNull" />
     </div>
     <var-popup position="bottom" v-model:show="isPopup">
       <!-- 底部输入框 -->
@@ -125,7 +124,7 @@ const isPopup = ref(false)// 显示评论输入框
 const isReply = ref(false) // 显示回复评论
 const commentValue = ref('')// 评论内容
 const inputHeight = ref(100)// 评论框高度
-const isNull = ref(false)// 是否存在评论
+const isNull = ref()// 是否存在评论
 const commentList = ref([])// 评论数据
 const replyList = ref([])// 回复数据
 const count = ref(0)// 一个有几条评论
@@ -133,7 +132,6 @@ const replyCount = ref(0)// 回复评论数量
 const mainCommentId = ref(0)// 主评论id,
 const flag = ref(true)
 onMounted(() => {
-  console.log("onmount")
   // 默认清除之前的数据
   commentList.value = []
   count.value = 0
@@ -162,9 +160,14 @@ function changeValue(e) {
 async function initComment() {
   const res = await getComment(props.recipe_id)
   if (res.status !== 200) return Snackbar.warning("请登录")
-  isNull.value = false
-  commentList.value = res.data
-  count.value = res.data.length
+  if (!res.data.length){
+    isNull.value = true
+  }else{
+    isNull.value = false
+    commentList.value = res.data
+    count.value = res.data.length
+  }
+  console.log("isNull.value", isNull.value)
 }
 // 发表评论
 async function sendComment() {
@@ -187,13 +190,14 @@ async function sendComment() {
     initComment()
   }
   else{
-    onShowReply(mainCommentId.value)
+    if(replyCount!==0){
+        onShowReply(mainCommentId.value)
+    }
   }
 }
 
 // 显示popup
 function showPopup(show) {
-  console.log("showPopup触发了", show);
   if (show) {
     iptConfig.value = {
       placeholder: '听说喜欢评论的人做饭会变好吃！',
@@ -211,13 +215,17 @@ function showPopup(show) {
 
 // 接收来自子组件NovelCommentItem 显示回复评论区的请求
 async function onShowReply(id, count) {
-  const res = await getReplyComment(id)
-  if (res.status !== 200 && res.status !== 204) return Snackbar.error(res.message)
-  replyList.value = res.data
-  console.log("replyList", replyList)
-  replyCount.value = res.data.length
-  isReply.value = true
-  mainCommentId.value = id
+  if(count!==0){
+        const res = await getReplyComment(id)
+        if (res.status !== 200 && res.status !== 204) return Snackbar.error(res.message)
+        replyList.value = res.data
+        replyCount.value = res.data.length
+        isReply.value = true
+        mainCommentId.value = id
+    }else{
+        replyCount.value = 0
+        isReply.value = true
+    }
 }
 </script>
 

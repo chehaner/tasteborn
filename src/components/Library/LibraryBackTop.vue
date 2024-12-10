@@ -1,6 +1,6 @@
 <template>
   <div class="library-back-top shadow" v-show="isTop" @click="onBackTop">
-    <to-top theme="outline" size="24" fill="#ff3992" strokeLinejoin="bevel" strokeLinecap="square"/>
+    <to-top theme="outline" size="24" fill="#189a7c" strokeLinejoin="bevel" strokeLinecap="square"/>
   </div>
 </template>
 

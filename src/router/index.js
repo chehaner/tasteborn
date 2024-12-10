@@ -27,7 +27,7 @@ const routes = [
     meta: {
       title: '动态内容-厨因味来'
     },
-    component: () => import("@/components/Blogs/Item/item.vue")
+    component: () => import("@/components/Blogs/item.vue")
   },
   {
     path: '/category',
@@ -87,14 +87,6 @@ const routes = [
     },
     component: () => import("@/views/Search/Search.vue"),
   },
-  // {
-  //   path: '/read/:id',
-  //   meta: {
-  //     title: '阅读-次元轻小说'
-  //   },
-  //   name: 'Read',
-  //   component: () => import("@/views/Read/Read.vue"),
-  // },
   {
     path: '/user/personal',
     meta: {
@@ -107,7 +99,7 @@ const routes = [
     path: '/user/history',
     name: "History",
     meta: {
-      title: '历史浏览-厨因味来'
+      title: '我的浏览-厨因味来'
     },
     component: () => import("@/views/User/History/History.vue")
   },
@@ -120,52 +112,12 @@ const routes = [
     component: () => import("@/views/User/Collect/Collect.vue")
   },
   {
-    path: '/user/comment',
-    name: "Comment",
+    path: '/user/create',
+    name: "Creation",
     meta: {
-      title: '我的评论-厨因味来'
+      title: '我的创作-厨因味来'
     },
-    component: () => import("@/views/User/Comment/Comment.vue")
-  },
-  // {
-  //   path: '/user/feedback',
-  //   name: "Feedback",
-  //   meta: {
-  //     title: '问题反馈-次元轻小说'
-  //   },
-  //   component: () => import("@/views/User/Feedback/Feedback.vue")
-  // },
-  // {
-  //   path: '/user/request',
-  //   name: "Request",
-  //   meta: {
-  //     title: '求书-次元轻小说'
-  //   },
-  //   component: () => import("@/views/User/Request/Request.vue")
-  // },
-  // {
-  //   path: '/user/about',
-  //   name: "About",
-  //   meta: {
-  //     title: '关于我们-次元轻小说'
-  //   },
-  //   component: () => import("@/views/User/About/About.vue")
-  // },
-  // {
-  //   path: '/test',
-  //   meta: {
-  //     title: 'test-次元轻小说'
-  //   },
-  //   name: 'Test',
-  //   component: () => import("@/views/Test/Test.vue"),
-  // },
-  {
-    path: '/user/forget',
-    name: "Forget",
-    meta: {
-      title: '忘记密码-厨因味来'
-    },
-    component: () => import("@/views/User/Forget/Forget.vue")
+    component: () => import("@/views/User/Create/Create.vue")
   },
   {
     path: '/create',
@@ -191,18 +143,6 @@ const routes = [
     },
     component: () => import("@/views/Create/Blog/blog.vue")
   }
-  // {
-  //   path: '/404',
-  //   name: '404',
-  //   meta: {
-  //     title: '404 not found'
-  //   },
-  //   component: () => import("@/views/Error/404.vue")
-  // },
-  // {
-  //   path: '/:catchAll(.*)',
-  //   redirect: '/404'
-  // }
 ]
 
 const router = createRouter({

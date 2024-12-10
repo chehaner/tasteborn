@@ -17,7 +17,7 @@ import { ref } from 'vue';
   <style scoped lang="scss">
   #home {
     margin-bottom: var(--bottom-navigation-height);
-    background-color: #f3f3f3;
+    background-color: #ffffff;
   }
   </style>
   

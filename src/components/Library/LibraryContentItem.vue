@@ -101,20 +101,6 @@ function onLink() {
 </script>
 
 <style scoped lang="scss">
-.author-avatar {
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  align-items: center;
-  border-radius: 50%;
-  object-fit: cover; /* 确保头像填充区域 */
-}
-.author-nickname {
-  font-size: 18px;
-  margin-left:8px;
-  color: #555;
-  font-weight: 400;
-}
 .library-content-item {
   display: flex;
   padding: 20px;
@@ -123,11 +109,10 @@ function onLink() {
 }
 
 .library-content-img {
-  flex-shrink: 0;
-  width: 80px;
-  height: 100px;
-  margin-right: 16px;
-  margin-left:16px;
+  width: 180px;
+  height: 130px;
+  margin-right: 20px;
+
 }
 
 .library-content-img img {
@@ -135,6 +120,7 @@ function onLink() {
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
+
 }
 
 .library-content-info {
@@ -146,9 +132,9 @@ function onLink() {
 }
 
 .library-content-name {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
-  color: #333;
+  margin-bottom: 10px;
 }
 
 .novel-header-author {
@@ -166,13 +152,15 @@ function onLink() {
 .author-avatar {
   width: 40px;
   height: 40px;
+  object-fit: cover;
   border-radius: 50%;
   margin-right: 8px;
+
 }
 
 .author-nickname {
-  font-size: 18px;
-  color: #666;
+  font-size: 20px;
+  color: #555;
 }
 
 .star-container {

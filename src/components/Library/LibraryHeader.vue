@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="library-content-icon" @click="onPopupShow">
-        <svg width="0.40rem" height="0.40rem" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L20.4 25.8178V38.4444L27.6 42V25.8178L42 9H6Z" fill="none" stroke="#ff3992" stroke-width="4" stroke-linejoin="bevel"/></svg>
+        <svg width="0.40rem" height="0.40rem" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L20.4 25.8178V38.4444L27.6 42V25.8178L42 9H6Z" fill="none" stroke="#189a7c" stroke-width="4" stroke-linejoin="bevel"/></svg>
       </div>
     </div>
   </div>
@@ -99,8 +99,8 @@ watch(() => route.path, () => {
         font-size: 16px;
         padding: 2px 10px;
         border-radius: 30px;
-        color: #ff3992;
-        border: 1px solid #ff3992;
+        color: #189a7c;
+        border: 1px solid #189a7c;
         margin-right: 5px;
       }
     }
@@ -111,7 +111,7 @@ watch(() => route.path, () => {
     align-items: center;
     span {
       font-size: 14px;
-      color: #ff3992;
+      color: #189a7c;
     }
   }
 }

@@ -62,7 +62,15 @@ export const getUserHistory = (limit = 20, page = 1) => {
     }
   })
 }
-
+// 获取用户创建
+export const getUserCreate = ( user_id, create_type ) => {
+  return request.get('/getUserCreate', {
+    params: {
+      user_id,
+      create_type
+    }
+  })
+}
 // 发送邮箱验证码
 export const sendCode = (email) => {
   return request.get('/getEmailCode', {

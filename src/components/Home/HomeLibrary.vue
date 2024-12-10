@@ -8,7 +8,7 @@
         <var-tabs
           v-model:active="active[index]"
           color="#fff"
-          active-color="#ff3992"
+          active-color="#189a7c"
           inactive-color="#000"
           indicator-size="0"
         >
@@ -27,7 +27,7 @@
             </HomeList>
           </var-tab-item>
         </var-tabs-items>
-        <var-loading type="wave" v-if="isLoading" color="#ff3992" />
+        <var-loading type="wave" v-if="isLoading" color="#189a7c" />
       </div>
     </div>
   </div>

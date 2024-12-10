@@ -5,7 +5,7 @@
       <span @click="onEmpty">清空历史</span>
     </div>
     <div class="search-history-list">
-      <div class="search-history-item" v-for="item in historyList" @click="onSearch(item)">
+      <div class="search-history-item" v-for="item in historyList" :key = "item" @click="onSearch(item)">
         {{ item }}
       </div >
     </div>
@@ -37,8 +37,8 @@ function onEmpty() {
   Dialog({
     title: '确认',
     message: '是否清除历史记录',
-    confirmButtonTextColor: "#ff3992",
-    cancelButtonTextColor: "#ff3992",
+    confirmButtonTextColor: "#189a7c",
+    cancelButtonTextColor: "#189a7c",
     closeOnClickOverlay: false,
     // 按下确认或取消按钮
     async onBeforeClose(action) {

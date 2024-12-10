@@ -156,7 +156,7 @@ function onLink() {
     margin-top: 50px;
     button {
       border: none;
-      background-color: #ff3992;
+      background-color: #189a7c;
       color: #fff;
       padding: 15px 100px;
       font-size: 20px;

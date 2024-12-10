@@ -1,14 +1,14 @@
 <template>
     <div class="category-page">
-      <!-- 头部 TabBar 和 MenuBar -->
+      <!-- 搜索栏 -->
       <HomeTabBar />
+      <!-- 次级菜单 -->
       <HomeMenuBar />
-  
-      <!-- 三个排行榜 -->
+      <!-- 排行榜 -->
       <div class="ranking-section">
         <div class="ranking-header">
-        <h2>排行榜</h2>
-    </div>
+          <h2>排行榜</h2>
+        </div>
         <RankingItem 
           title="收藏榜"
           :rankings="collectRankings"
@@ -22,7 +22,6 @@
           :rankings="followRankings"
         />
       </div>
-  
       <!-- 分类 -->
       <div class="category-section">
         <!-- 菜系分类 -->
@@ -47,34 +46,56 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import BottomTab from '@/components/Common/BottomTab.vue';
   import HomeMenuBar from '@/components/Home/HomeMenuBar.vue';
   import HomeTabBar from '@/components/Home/HomeTabBar.vue';
   import RankingItem from '@/components/Category/RankingItem.vue';
   import CategoryItem from '@/components/Category/CategoryItem.vue';
-  
+  import { getCollectRank, getRateRank, getFollowRank } from '@/api/category';
+  const collectRankings = ref([])
+  // const ratingRankings = ref([])
+  // const followRankings = ref([])
   // 模拟排行榜数据
-  const collectRankings = ref([
-    {
-      cover: 'https://via.placeholder.com/150',
-      title: '番茄炒蛋',
-      creator: '张三',
-      favorites: 120,
-    },
-    {
-      cover: 'https://via.placeholder.com/100',
-      title: '红烧肉',
-      creator: '李四',
-      favorites: 98,
-    },
-    {
-      cover: 'https://via.placeholder.com/100',
-      title: '麻辣火锅',
-      creator: '王五',
-      favorites: 76,
-    },
-  ]);
+  // const collectRankings = ref([]);
+  onMounted(() => {
+    getCollectRankData();
+    // getRateRankData();
+    // getFollowRankData();
+  })
+  async function getCollectRankData() {
+    const res = await getCollectRank();
+    collectRankings.value = res.data.splice(0,3)
+  }
+  async function getRateRankData() {
+    const res = await getRateRank();
+    ratingRankings.value = res.data.splice(0,3)
+  }
+  async function getFollowRankData() {
+    const res = await getFollowRank();
+    followRankings.value = res.data.splice(0,3)
+  }
+  // 模拟排行榜数据
+  // const collectRankings = ref([
+  //   {
+  //     cover: 'https://via.placeholder.com/150',
+  //     title: '番茄炒蛋',
+  //     creator: '张三',
+  //     favorites: 120,
+  //   },
+  //   {
+  //     cover: 'https://via.placeholder.com/100',
+  //     title: '红烧肉',
+  //     creator: '李四',
+  //     favorites: 98,
+  //   },
+  //   {
+  //     cover: 'https://via.placeholder.com/100',
+  //     title: '麻辣火锅',
+  //     creator: '王五',
+  //     favorites: 76,
+  //   },
+  // ]);
   
   const ratingRankings = ref([
     {
@@ -120,32 +141,32 @@
   
   // 模拟分类数据
   const cuisineCategories = ref([
-    { image: 'https://via.placeholder.com/50', name: '粤菜', value:'1' },
-    { image: 'https://via.placeholder.com/50', name: '川菜', value: '2'},
-    { image: 'https://via.placeholder.com/50', name: '湘菜', value: '3'},
-    { image: 'https://via.placeholder.com/50', name: '鲁菜', value: '4' },
-    { image: 'https://via.placeholder.com/50', name: '江浙菜', value: '5' },
-    { image: 'https://via.placeholder.com/50', name: '西北菜', value: '6' },
-    { image: 'https://via.placeholder.com/50', name: '西式', value: '7' },
-    { image: 'https://via.placeholder.com/50', name: '日式', value: '8'},
-    { image: 'https://via.placeholder.com/50', name: '韩式', value: '9'  },
-    { image: 'https://via.placeholder.com/50', name: '东南亚', value: '10' }
+    { image: require('@/assets/category/粤菜.png'), name: '粤菜', value: 1 },
+    { image: require('@/assets/category/川菜.png'), name: '川菜', value: 2},
+    { image: require('@/assets/category/湘菜.png'), name: '湘菜', value: 3},
+    { image: require('@/assets/category/鲁菜.png'), name: '鲁菜', value: 4 },
+    { image: require('@/assets/category/江浙菜.png'), name: '江浙菜', value: 5 },
+    { image: require('@/assets/category/西北菜.png'), name: '西北菜', value: 6 },
+    { image: require('@/assets/category/西餐.png'), name: '西式', value: 7 },
+    { image: require('@/assets/category/日式.png'), name: '日式', value: 8},
+    { image: require('@/assets/category/韩式.png'), name: '韩式', value: 9 },
+    { image: require('@/assets/category/东南亚.png'), name: '东南亚', value: 10 }
   ]);
   
   const mealTimeCategories = ref([
-    { image: 'https://via.placeholder.com/50', name: '早餐', value: '11' },
-    { image: 'https://via.placeholder.com/50', name: '午餐', value: '12' },
-    { image: 'https://via.placeholder.com/50', name: '小食', value: '13' },
-    { image: 'https://via.placeholder.com/50', name: '晚餐', value: '14' },
-    { image: 'https://via.placeholder.com/50', name: '夜宵', value: '15' },
+    { image: require('@/assets/category/早餐.png'), name: '早餐', value: '11' },
+    { image: require('@/assets/category/午餐.png'), name: '午餐', value: '12' },
+    { image: require('@/assets/category/小食.png'), name: '小食', value: '13' },
+    { image: require('@/assets/category/晚餐.png'), name: '晚餐', value: '14' },
+    { image: require('@/assets/category/夜宵.png'), name: '夜宵', value: '15' },
   ]);
   
   const targetAudienceCategories = ref([
-    { image: 'https://via.placeholder.com/50', name: '婴幼儿', value: '16' },
-    { image: 'https://via.placeholder.com/50', name: '健身', value: '17' },
-    { image: 'https://via.placeholder.com/50', name: '孕妇', value: '18' },
-    { image: 'https://via.placeholder.com/50', name: '老人', value: '19' },
-    { image: 'https://via.placeholder.com/50', name: '痛经', value: '20' },
+    { image: require('@/assets/category/宝宝辅食.png'), name: '婴幼儿', value: '16' },
+    { image: require('@/assets/category/健身.png'), name: '健身', value: '17' },
+    { image: require('@/assets/category/孕妇.png'), name: '孕妇', value: '18' },
+    { image: require('@/assets/category/老人.png'), name: '老人', value: '19' },
+    { image: require('@/assets/category/痛经.png'), name: '痛经', value: '20' },
   ]);
   </script>
   
@@ -156,11 +177,11 @@
   }
   
   .ranking-section {
-    background-color: rgb(253, 250, 244);
+    background-color: #fdf9f2;
   }
   
   .category-section {
-    background-color: rgb(253, 250, 244);
+    background-color: #fdfaf4;
     margin: 10px 0;
   }
   

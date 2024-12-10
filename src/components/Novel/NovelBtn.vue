@@ -35,6 +35,10 @@ const props = defineProps({
     type: Number,
     default: 0
   },
+  author_id: {
+    type: Number,
+    default: 0
+  },
 })
 
 const isCollect = ref(false)

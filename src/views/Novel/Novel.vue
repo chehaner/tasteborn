@@ -13,6 +13,7 @@
       :recentChapters="recipeInfo.recentChapters"
       :classTags="recipeInfo.classTags"
       :intro="recipeInfo.content"
+      :recipe_id="recipeInfo.recipe_id"
     />
     <!-- <NovelDirectory
       :recent-chapters="recipeInfo.recentChapters"
@@ -23,6 +24,9 @@
       :ingredients="recipeInfo.ingredients"
       :steps_count="recipeInfo.steps_count"
       :steps="recipeInfo.steps"
+      :tags="recipeInfo.tags"
+      :publish_time="recipeInfo.publish_time"
+      :rate="recipeInfo.rate"
     />
     <NovelComment
       :recipe_id="recipeInfo.recipe_id"
@@ -30,6 +34,7 @@
     <NovelBtn
       :recipe_id="recipeInfo.recipe_id"
       :star="recipeInfo.stars"
+      :author_id = "recipeInfo.author_id"
     />
   </div>
 </template>
