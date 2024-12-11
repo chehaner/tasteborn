@@ -18,7 +18,7 @@
 
 <!-- 编辑按钮 -->
     <div 
-      v-if="props.author_id === user_id" 
+      v-if="Number(props.author_id) === Number(user_id)" 
       class="novel-collect-btn" 
       @click="navigateToEditRecipe"
     >

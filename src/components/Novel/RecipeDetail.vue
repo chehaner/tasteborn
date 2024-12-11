@@ -37,6 +37,12 @@
 <script setup>
 import moment from "moment";
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+
+
 const props = defineProps({
     ingredients_count: {
         type: Number,
@@ -82,6 +88,42 @@ const parsedSteps = computed(() => {
     const stepsList = props.steps.split("*****").filter(Boolean);
     return stepsList
 })
+
+const cuisineCategories = ref([
+    { image: require('@/assets/category/粤菜.png'), name: '粤菜', value: 1 },
+    { image: require('@/assets/category/川菜.png'), name: '川菜', value: 2},
+    { image: require('@/assets/category/湘菜.png'), name: '湘菜', value: 3},
+    { image: require('@/assets/category/鲁菜.png'), name: '鲁菜', value: 4 },
+    { image: require('@/assets/category/江浙菜.png'), name: '江浙菜', value: 5 },
+    { image: require('@/assets/category/西北菜.png'), name: '西北菜', value: 6 },
+    { image: require('@/assets/category/西餐.png'), name: '西式', value: 7 },
+    { image: require('@/assets/category/日式.png'), name: '日式', value: 8},
+    { image: require('@/assets/category/韩式.png'), name: '韩式', value: 9 },
+    { image: require('@/assets/category/东南亚.png'), name: '东南亚', value: 10 },
+    { image: require('@/assets/category/早餐.png'), name: '早餐', value: 11 },
+    { image: require('@/assets/category/午餐.png'), name: '午餐', value: 12 },
+    { image: require('@/assets/category/小食.png'), name: '小食', value: 13 },
+    { image: require('@/assets/category/晚餐.png'), name: '晚餐', value: 14 },
+    { image: require('@/assets/category/夜宵.png'), name: '夜宵', value: 15 },
+    { image: require('@/assets/category/宝宝辅食.png'), name: '婴幼儿', value: 16 },
+    { image: require('@/assets/category/健身.png'), name: '健身', value: 17 },
+    { image: require('@/assets/category/孕妇.png'), name: '孕妇', value: 18 },
+    { image: require('@/assets/category/老人.png'), name: '老人', value: 19 },
+    { image: require('@/assets/category/痛经.png'), name: '痛经', value: 20 },
+  ]);
+
+  function onSearch(tag) {
+    const category = cuisineCategories.value.find(c => c.name === tag);
+    if(category){
+      router.push({
+      path: `/category/categories/${category.value}`,
+      query:{name:category.name, value:category.value}
+    });
+    }else {
+    console.error(`未找到与标签 "${tag}" 匹配的类别`);
+  }
+    
+}
 
 </script>
 <style lang="scss" scoped>

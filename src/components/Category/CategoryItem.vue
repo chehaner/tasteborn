@@ -6,7 +6,7 @@
 
     <div class="category-content">
       <div class="category-list">
-        <div v-for="(category, index) in categories" :key="index" class="category" @click="goToCategoryPage(category.value)">
+        <div v-for="(category, index) in categories" :key="index" class="category" @click="goToCategoryPage(category)">
           <img :src="category.image" alt="Category Image" />
           <p>{{ category.name }}</p>
         </div>
@@ -18,6 +18,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { defineProps } from 'vue';
+import { Cat } from '@icon-park/vue-next';
 
 const props = defineProps({
   title: {
@@ -33,9 +34,11 @@ const props = defineProps({
 const router = useRouter();
 // 跳转到对应类别页面
 function goToCategoryPage(category) {
+  console.log(category)
   setTimeout(() => {
     router.push({
-      path: `/category/categories/${category}`,
+      path: `/category/categories/${category.value}`,
+      query:{name:category.name, value:category.value}
     });
   }, 0);
 }
