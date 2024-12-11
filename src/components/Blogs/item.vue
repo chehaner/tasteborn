@@ -30,6 +30,20 @@
           <Comment theme="outline" size="20"/>
           <span>{{ count }}</span>
         </div>
+        <div 
+          v-if="isAuthor" 
+          class="novel-collect-btn1" 
+          @click="editPost">
+          <Edit theme="outline" size="24" />
+          <span>编辑</span>
+        </div>
+        <div 
+          v-if="isAuthor" 
+          class="novel-collect-btn1" 
+          @click="editPost">
+          <Edit theme="outline" size="24" />
+          <span>编辑</span>
+        </div>
       </div>
 
       <!-- 评论框（默认显示）
@@ -60,13 +74,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router'; // 用来获取路由参数
+import { ref, onMounted, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router'; // 用来获取路由参数
 import { getBlogDetail, updateCollect } from '@/api/blog'; // 假设你的 API 请求函数
-import { Comment, ThumbsUp } from "@icon-park/vue-next";
+import { Comment, ThumbsUp, Edit } from "@icon-park/vue-next";
 import BackBar from '@/components/Common/BackBar.vue';
 import BlogComment from './BlogComment.vue';
 const route = useRoute(); // 获取当前路由对象
+const router = useRouter();
+
 const post = ref(null);
 const count = ref(0)
 const isCollect = ref();
@@ -98,6 +114,7 @@ onMounted(async () => {
   post.value = res.data;
   isCollect.value = res.data.blog.isFavorited;
 });
+
 // 根据图片数量返回相应的类名
 function getImageClass(imageCount) {
   if (imageCount === 1) {
@@ -108,10 +125,25 @@ function getImageClass(imageCount) {
     return 'three-images'; // 其他情况：2张或3张图片
   }
 }
+
+
+const isAuthor = computed(() => Number(user_id) === Number(post.value?.blog.author_id)); // 判断当前用户是否为动态作者
+
+// 点击编辑按钮
+function editPost() {
+  if (!post.value) return; // 如果未加载动态数据，则返回
+  router.push({
+    name: 'Blog', // 确保路由名称对应创建动态页面
+    query: { 
+      isEdit:'true',
+      blogImg:[post.value.imageUrls],
+      blogData: JSON.stringify(post.value.blog)
+       // 将 blog 数据传递给创建动态页面
+    },
+  });
+}
+
 </script>
-
-
-
   
   <style scoped lang="scss">
 .blogs-page {
@@ -237,9 +269,22 @@ function getImageClass(imageCount) {
       font-size: 16px;
     }
   }
+  .novel-collect-btn1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 10px;
+    span {
+      font-size: 16px;
+    }
+  }
 }
 .novel-btn .novel-collect-btn {
   gap: 10px;
+}
+
+.novel-collect-btn1{
+  margin-left: 220px;
 }
   </style>
   

@@ -82,110 +82,275 @@
   
 <script setup>
   import { ref, onMounted } from 'vue';
-  import { useRouter } from "vue-router";
+  import { useRouter, useRoute } from "vue-router";
   import BackBar from "@/components/Common/BackBar.vue";
   import COS from 'cos-js-sdk-v5';
   import { addBlog, getHomeWork } from '@/api/create';
   import { Snackbar } from '@varlet/ui';
-  import { useRoute } from 'vue-router';
+
   const router = useRouter();
   const route = useRoute();
   const recipe_id = route.query.recipe_id;
   const recipeInfo = ref([]);
+  const isEdit = route.query.isEdit === "true"; // 判断是否为编辑状态
+  const blogImg = isEdit ? route.query.blogImg : null;
+  const blogData = isEdit ? JSON.parse(route.query.blogData) : null; // 获取编辑时的动态数据
+
+
   // 文本内容
   const content = ref('');
   // 上传图片数组
   const images = ref([]);
-  
   // 最大图片数量
   const maxImages = 9;
-  onMounted(async () => {
-    console.log("recipe_id", recipe_id)
-  if (recipe_id) {
-    try {
-      console.log("recipe_id", recipe_id)
-      // 发起请求，例如调用 API 获取与该 recipe_id 相关的数据
-      const response = await getHomeWork(recipe_id);
-      recipeInfo.value = response.data;  // 假设返回的数据存储在 response.data 中
-    } catch (error) {
-      console.log(error);
+
+    // 初始化数据
+    onMounted(async() => {
+    if (blogData) {
+      content.value = blogData.content || ''; // 回显文本内容
+      images.value = blogImg || []; // 回显图片
     }
-  }
-});
-  // 选择图片时
+
+    if (recipe_id) {
+      try {
+        const response = await getHomeWork(recipe_id);
+        recipeInfo.value = response.data;
+      } catch (error) {
+        console.error('加载菜谱数据失败:', error);
+      }
+    }
+  });
+
   function handleFileChange(event) {
     const files = event.target.files;
-    Array.from(files).forEach((file, index) => {
-      images.value.push(URL.createObjectURL(file));  // 预览图片
+    Array.from(files).forEach(file => {
+      images.value.push(URL.createObjectURL(file));
     });
     event.target.value = null;
   }
-  
-  // 点击发布按钮时，上传所有图片
+
   async function handleSubmit() {
     if (!content.value.trim() && images.value.length === 0) {
-      Snackbar.warning("请填写内容或选择图片后再发布！");
+      Snackbar.warning('请填写内容或选择图片后再发布！');
       return;
     }
-  
-    // 上传所有图片
+
     try {
-      const user_id = localStorage.getItem('user_id')
-      console.log("images", images.value)
+      const user_id = localStorage.getItem('user_id');
       const uploadPromises = images.value.map(async (blobUrl, index) => {
-        // 获取实际的文件对象
-        const file = await fetch(blobUrl).then(res => res.blob()).then(blob => new File([blob], `image-${index}.jpg`, { type: blob.type }));
-        // 上传文件
+        const file = await fetch(blobUrl)
+          .then(res => res.blob())
+          .then(blob => new File([blob], `image-${index}.jpg`, { type: blob.type }));
         return uploadImageToCos(file, index);
       });
+
       const uploadedImages = await Promise.all(uploadPromises);
       const res = await addBlog(user_id, content.value, uploadedImages, recipe_id);
-      if (res && res.status === 200) {
-        Snackbar.success("动态发布成功！")
-        router.push("/blogs");
+
+      if (res?.status === 200) {
+        Snackbar.success('动态发布成功！');
+        router.push('/blogs');
       } else {
-        Snackbar.error("发布失败，请重试！")
-        console.error("发布博客失败:", res);
+        Snackbar.error('发布失败，请重试！');
       }
     } catch (error) {
-      console.error("图片上传失败：", error);
-      Snackbar.error("图片上传失败，请稍后再试！");
+      console.error('图片上传或发布失败:', error);
+      Snackbar.error('操作失败，请稍后再试！');
     }
-    
   }
-  
-  // 上传图片到腾讯云
-  function uploadImageToCos(file, i) {
-    console.log("在处理第", i)
+
+  function uploadImageToCos(file, index) {
     return new Promise((resolve, reject) => {
-      const fileName = `blogs/${content.value}/${i}`; // 生成唯一文件名
+      const fileName = `blogs/${Date.now()}-${index}`;
       const cos = new COS({
-        SecretId:'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
-        SecretKey:'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'
+        SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
+        SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m',
       });
-  
+
       cos.putObject({
-        Bucket: 'test3-1331403891',  // 你的 Bucket 名称
-        Region: 'ap-guangzhou',  // 例如：ap-shanghai
-        Key: fileName,  // 存储文件的路径
-        Body: file,  // 文件内容
-        ContentType: file.type,  // 文件类型
+        Bucket: 'test3-1331403891',
+        Region: 'ap-guangzhou',
+        Key: fileName,
+        Body: file,
+        ContentType: file.type,
       }, (err, data) => {
         if (err) {
-          reject(err);  // 如果上传失败，reject 错误
+          reject(err);
         } else {
-          const fileUrl = `https://${data.Location}`;
-          console.log("fileUrl", fileUrl)
-          resolve(fileUrl);  // 如果上传成功，resolve 文件 URL
+          resolve(`https://${data.Location}`);
         }
       });
     });
   }
 
-  // 删除图片
   function deleteImage(index) {
-    images.value.splice(index, 1); // 从数组中移除对应索引的图片
+    images.value.splice(index, 1);
   }
+
+//   onMounted(async () => {
+//   if (recipe_id) {
+//     try {
+//       const response = await getHomeWork(recipe_id);
+//       recipeInfo.value = response.data;
+//     } catch (error) {
+//       console.error('加载菜谱数据失败:', error);
+//     }
+//   }
+// });
+
+// function handleFileChange(event) {
+//   const files = event.target.files;
+//   Array.from(files).forEach(file => {
+//     images.value.push(URL.createObjectURL(file));
+//   });
+//   event.target.value = null;
+// }
+
+// async function handleSubmit() {
+//   if (!content.value.trim() && images.value.length === 0) {
+//     Snackbar.warning('请填写内容或选择图片后再发布！');
+//     return;
+//   }
+
+//   try {
+//     const user_id = localStorage.getItem('user_id');
+//     const uploadPromises = images.value.map(async (blobUrl, index) => {
+//       const file = await fetch(blobUrl)
+//         .then(res => res.blob())
+//         .then(blob => new File([blob], `image-${index}.jpg`, { type: blob.type }));
+//       return uploadImageToCos(file, index);
+//     });
+
+//     const uploadedImages = await Promise.all(uploadPromises);
+//     const res = await addBlog(user_id, content.value, uploadedImages, recipe_id);
+
+
+//     if (res?.status === 200) {
+//       Snackbar.success('动态发布成功！');
+//       router.push('/blogs');
+//     } else {
+//       Snackbar.error('发布失败，请重试！');
+//     }
+//   } catch (error) {
+//     console.error('图片上传或发布失败:', error);
+//     Snackbar.error('操作失败，请稍后再试！');
+//   }
+// }
+
+// function uploadImageToCos(file, index) {
+//   return new Promise((resolve, reject) => {
+//     const fileName = `blogs/${Date.now()}-${index}`;
+//     const cos = new COS({
+//       SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
+//       SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m',
+//     });
+
+//     cos.putObject({
+//       Bucket: 'test3-1331403891',
+//       Region: 'ap-guangzhou',
+//       Key: fileName,
+//       Body: file,
+//       ContentType: file.type,
+//     }, (err, data) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(`https://${data.Location}`);
+//       }
+//     });
+//   });
+// }
+
+// function deleteImage(index) {
+//   images.value.splice(index, 1);
+// }
+//   onMounted(async () => {
+//     console.log("recipe_id", recipe_id)
+//   if (recipe_id) {
+//     try {
+//       console.log("recipe_id", recipe_id)
+//       // 发起请求，例如调用 API 获取与该 recipe_id 相关的数据
+//       const response = await getHomeWork(recipe_id);
+//       recipeInfo.value = response.data;  // 假设返回的数据存储在 response.data 中
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// });
+//   // 选择图片时
+//   function handleFileChange(event) {
+//     const files = event.target.files;
+//     Array.from(files).forEach((file, index) => {
+//       images.value.push(URL.createObjectURL(file));  // 预览图片
+//     });
+//     event.target.value = null;
+//   }
+  
+//   // 点击发布按钮时，上传所有图片
+//   async function handleSubmit() {
+//     if (!content.value.trim() && images.value.length === 0) {
+//       Snackbar.warning("请填写内容或选择图片后再发布！");
+//       return;
+//     }
+  
+//     // 上传所有图片
+//     try {
+//       const user_id = localStorage.getItem('user_id')
+//       console.log("images", images.value)
+//       const uploadPromises = images.value.map(async (blobUrl, index) => {
+//         // 获取实际的文件对象
+//         const file = await fetch(blobUrl).then(res => res.blob()).then(blob => new File([blob], `image-${index}.jpg`, { type: blob.type }));
+//         // 上传文件
+//         return uploadImageToCos(file, index);
+//       });
+//       const uploadedImages = await Promise.all(uploadPromises);
+//       const res = await addBlog(user_id, content.value, uploadedImages, recipe_id);
+//       if (res && res.status === 200) {
+//         Snackbar.success("动态发布成功！")
+//         router.push("/blogs");
+//       } else {
+//         Snackbar.error("发布失败，请重试！")
+//         console.error("发布博客失败:", res);
+//       }
+//     } catch (error) {
+//       console.error("图片上传失败：", error);
+//       Snackbar.error("图片上传失败，请稍后再试！");
+//     }
+    
+//   }
+  
+//   // 上传图片到腾讯云
+//   function uploadImageToCos(file, i) {
+//     console.log("在处理第", i)
+//     return new Promise((resolve, reject) => {
+//       const fileName = `blogs/${content.value}/${i}`; // 生成唯一文件名
+//       const cos = new COS({
+//         SecretId:'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',
+//         SecretKey:'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'
+//       });
+  
+//       cos.putObject({
+//         Bucket: 'test3-1331403891',  // 你的 Bucket 名称
+//         Region: 'ap-guangzhou',  // 例如：ap-shanghai
+//         Key: fileName,  // 存储文件的路径
+//         Body: file,  // 文件内容
+//         ContentType: file.type,  // 文件类型
+//       }, (err, data) => {
+//         if (err) {
+//           reject(err);  // 如果上传失败，reject 错误
+//         } else {
+//           const fileUrl = `https://${data.Location}`;
+//           console.log("fileUrl", fileUrl)
+//           resolve(fileUrl);  // 如果上传成功，resolve 文件 URL
+//         }
+//       });
+//     });
+//   }
+
+//   // 删除图片
+//   function deleteImage(index) {
+//     images.value.splice(index, 1); // 从数组中移除对应索引的图片
+//   }
   </script>
   
   <style scoped>

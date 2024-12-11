@@ -35,6 +35,7 @@
       :recipe_id="recipeInfo.recipe_id"
       :star="recipeInfo.stars"
       :author_id = "recipeInfo.author_id"
+      :recipeInfo="recipeInfo"
     />
   </div>
 </template>

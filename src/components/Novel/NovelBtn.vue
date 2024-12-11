@@ -15,17 +15,29 @@
       <Camera theme="outline" size="24"/>
       <span>交作业</span>
     </div>
+
+<!-- 编辑按钮 -->
+    <div 
+      v-if="props.author_id === user_id" 
+      class="novel-collect-btn" 
+      @click="navigateToEditRecipe"
+    >
+      <Edit theme="outline" size="24" />
+      <span>编辑</span>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { Comment, Star, Camera } from "@icon-park/vue-next";
+import { Comment, Star, Camera, Edit } from "@icon-park/vue-next";
 import { Dialog } from '@varlet/ui'
 import { updateCollect, addHistory, cancelCollect, getUserCollect } from "@/api/novel";
 import {onMounted, ref, watch} from "vue";
 import { Snackbar } from "@varlet/ui";
 import {useRouter} from "vue-router";
 import { getComment } from "@/api/novel";
+
 
 const props = defineProps({
   recipe_id: {
@@ -39,6 +51,9 @@ const props = defineProps({
   author_id: {
     type: Number,
     default: 0
+  },
+  recipeInfo:{
+    type: Array
   },
 })
 const emit = defineEmits()
@@ -57,6 +72,9 @@ watch(() => props.recipe_id, async () => {
       count.value = res.data.length + totalReplyCount
     }
 });
+
+
+console.log("12345",props.recipeInfo)
 
 // 判断用户是否已经收藏
 async function initCollectCommentData() {
@@ -98,6 +116,17 @@ const navigateToBlogs = () => {
   const recipe_id = props.recipe_id; 
   router.push({ path: '/create/blog', query: { recipe_id } });
 };
+
+// 跳转到编辑菜谱页面
+const navigateToEditRecipe = () => {
+  router.push({
+    path: '/create/recipe',
+    query: { recipe_id: props.recipe_id, isEdit:"true"},
+    state: { recipeData: props.recipeInfo } // 将菜谱信息通过 state 传递
+  });
+};
+
+
 // // 弹出框
 // async function collectResult(message, fun, flag) {
 //   await Dialog({
