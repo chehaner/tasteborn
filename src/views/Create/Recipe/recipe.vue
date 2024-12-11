@@ -1,7 +1,7 @@
 <template>
     <div class="recipe-page">
       <!-- 顶部导航栏 -->
-      <BackBar title="菜谱创作" />
+      <BackBar :title="backBarTitle" />
       <div class="cover-container">
     <!-- 封面图 -->
     <div class="cover-wrapper">
@@ -141,22 +141,26 @@
   </template>
   
   <script setup>
-  import { ref } from "vue";
-  import { useRouter } from "vue-router";
+  import { ref, onMounted, computed } from "vue";
+  import { useRouter, useRoute } from "vue-router";
   import BackBar from "@/components/Common/BackBar.vue";
   import { addRecipe } from "@/api/create";
   import COS from 'cos-js-sdk-v5';
 import { Snackbar } from "@varlet/ui";
+import { getRecipeInfo } from "@/api/novel";
   // 路由实例
   const router = useRouter();
-  
+  const route = useRoute();
+
   // 数据
   const coverImage = ref(''); // 用户选的封面图路径
   const defaultCover = '/path/to/default-cover.jpg'; // 默认占位图路径
   const recipeTitle = ref("");
   const description = ref("");
-  const ingredients = ref([{ name: "", amount: "" }]);
-  const steps = ref([{ description: "" }]);
+  // const ingredients = ref([{ name: "", amount: "" }]);
+  const ingredients = ref([]);
+  const steps = ref([]);
+  // const steps = ref([{ description: "" }]);
   const selectedCategories = ref([]); // 选中的分类列表
   const coverFile = ref(null);
   const categoryOptions = ref([ // 分类选项数据
@@ -184,7 +188,11 @@ import { Snackbar } from "@varlet/ui";
   { label: '老人', value: '19' },
   { label: '痛经', value: '20' },
 ]);
-  
+
+const backBarTitle = computed(()=>{
+  return route.query.isEdit === 'true' ? '菜谱编辑' : '菜谱创作';
+})
+
   // 文件选择器引用
 const fileInput = ref(null);
 
@@ -203,23 +211,102 @@ const handleFileChange = (event) => {
   }
 };
 
+const recipeInfo = ref({})
+// 获取菜谱信息
+async function initRecipeInfo(id) {
+  const res = await getRecipeInfo(id)
+  recipeInfo.value = res.data
+}
 
 
-  function addIngredient() {
-    ingredients.value.push({ name: "", amount: "" });
+
+onMounted(async () => {
+  const recipe_id = route.query.recipe_id; // 获取 query 中的 recipe_id
+  const isEdit = route.query.isEdit === "true"; // 判断是否是编辑模式
+
+  if (isEdit && recipe_id) {
+    try {
+      // 等待 initRecipeInfo 完成
+      await initRecipeInfo(recipe_id);
+
+      // 确保 recipeInfo.value 已被正确赋值后再初始化页面数据
+      if (recipeInfo.value) {
+        coverImage.value = recipeInfo.value.img || '';
+        recipeTitle.value = recipeInfo.value.recipe_name || '';
+        description.value = recipeInfo.value.content || '';
+
+        // 处理用料（ingredients）数据
+        ingredients.value = recipeInfo.value.ingredients
+          ? recipeInfo.value.ingredients.split('*****').map(item => {
+              const [name, amount] = item.split('--');
+              return { name: name || '', amount: amount || '' };
+            })
+          : [{ name: '', amount: '' }];
+
+        // 处理步骤（steps）数据
+        steps.value = recipeInfo.value.steps
+          ? recipeInfo.value.steps.split('*****').map(step => ({ description: step || '' }))
+          : [{ description: '' }];
+
+        // 初始化分类选项
+        selectedCategories.value = recipeInfo.value.tags
+        .map(tag => {
+          const option = categoryOptions.value.find(option => option.label === tag);
+          return option ? option.value : null;
+        })
+        .filter(value => value !== null);
+
+        // 提交时转换回标签
+        function getSelectedTags() {
+          return selectedCategories.value.map(value => {
+            const option = categoryOptions.value.find(option => option.value === value);
+            return option ? option.label : null;
+          }).filter(label => label !== null);
+        }
+      } else {
+        console.error("获取菜谱数据失败，recipeInfo.value 为空");
+        alert("无法加载菜谱数据，请稍后重试！");
+      }
+    } catch (error) {
+      console.error("获取菜谱信息时发生错误:", error);
+      alert("加载数据失败，请检查网络连接！");
+    }
+  } else {
+    // 如果是新建菜谱
+    coverImage.value = '';
+    recipeTitle.value = '';
+    description.value = '';
+    ingredients.value = [{ name: "", amount: "" }];
+    steps.value = [{ description: "" }];
+    selectedCategories.value = [];
   }
+});
+
+
+
+// 用料操作
+const addIngredient = () => ingredients.value.push({ name: "", amount: "" });
+const removeIngredient = (index) => ingredients.value.splice(index, 1);
+
+// 步骤操作
+const addStep = () => steps.value.push({ description: "" });
+const removeStep = (index) => steps.value.splice(index, 1);
+
+  // function addIngredient() {
+  //   ingredients.value.push({ name: "", amount: "" });
+  // }
   
-  function removeIngredient(index) {
-    ingredients.value.splice(index, 1);
-  }
+  // function removeIngredient(index) {
+  //   ingredients.value.splice(index, 1);
+  // }
   
-  function addStep() {
-    steps.value.push({ description: "" });
-  }
+  // function addStep() {
+  //   steps.value.push({ description: "" });
+  // }
   
-  function removeStep(index) {
-    steps.value.splice(index, 1);
-  }
+  // function removeStep(index) {
+  //   steps.value.splice(index, 1);
+  // }
   //////////////////////////////// 发布菜谱
 const handlePublish = async () => {
   if (!recipeTitle.value.trim()) {
