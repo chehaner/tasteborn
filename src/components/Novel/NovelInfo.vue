@@ -65,8 +65,10 @@ import { ref, watch } from 'vue';
 const rating = ref(0); // 用户选择的评分
 const hoverRating = ref(0); // 鼠标悬停时的评分
 watch(() => props.rate, (newRate) => {
-  console.log("123")
-  rating.value = newRate;
+  const numericRate = Number(newRate);  // 确保转换为数字
+  if (!isNaN(numericRate)) {
+    rating.value = numericRate.toFixed(2);  // 格式化为两位小数
+  }
 });
 // 点击星星时确认评分
 const setRating = (star) => {
@@ -77,6 +79,7 @@ const setRating = (star) => {
 const submitRating = async () => {
   const user_id = localStorage.getItem('user_id')
   const res = await addRate(user_id, props.recipe_id, rating.value)
+  window.location.reload()
 };
 </script>
 

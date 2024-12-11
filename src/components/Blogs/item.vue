@@ -24,11 +24,11 @@
       <div class="novel-btn">
         <div class="novel-collect-btn" @click="addCollectFun">
           <thumbs-up :theme="isCollect ? 'filled' :'outline'" size="20" :fill="isCollect ? '#189a7c' : '#333'"/>
-          <span :class="{ 'novel-color': isCollect }"></span>
+          <span :class="{ 'novel-color': isCollect }">{{ post.blog.likes }}</span>
         </div>
         <div class="novel-collect-btn">
           <Comment theme="outline" size="20"/>
-          <span>评论</span>
+          <span>{{ count }}</span>
         </div>
       </div>
 
@@ -54,6 +54,7 @@
       <div class="post-date">{{ post.publish_time }}</div>
       <BlogComment 
        :id="post.blog.blog_id"
+       @updateCount="handleCountUpdate"
       />
     </div>
 </template>
@@ -61,17 +62,41 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; // 用来获取路由参数
-import { getBlogDetail } from '@/api/blog'; // 假设你的 API 请求函数
+import { getBlogDetail, updateCollect } from '@/api/blog'; // 假设你的 API 请求函数
 import { Comment, ThumbsUp } from "@icon-park/vue-next";
 import BackBar from '@/components/Common/BackBar.vue';
 import BlogComment from './BlogComment.vue';
 const route = useRoute(); // 获取当前路由对象
 const post = ref(null);
+const count = ref(0)
+const isCollect = ref();
+const user_id = localStorage.getItem('user_id')
+const blog_id = route.params.blog_id;
+function handleCountUpdate(newCount) {
+  count.value = newCount;  // 更新父组件中的 count
+}
+async function addCollectFun() {
+
+  if (!isCollect.value) {
+    // 添加收藏
+    await updateCollect(user_id, blog_id, 1)
+    isCollect.value = true
+  } 
+  // 已经收藏了
+  else {
+    // 取消收藏
+    await updateCollect(user_id, blog_id, 0)
+    isCollect.value = false
+  }
+  window.location.reload()
+}
 // 页面加载时获取博客详情
 onMounted(async () => {
+  const user_id = localStorage.getItem('user_id');
   const blog_id = route.params.blog_id;
-  const res = await getBlogDetail(blog_id);
+  const res = await getBlogDetail(blog_id, user_id);
   post.value = res.data;
+  isCollect.value = res.data.blog.isFavorited;
 });
 // 根据图片数量返回相应的类名
 function getImageClass(imageCount) {

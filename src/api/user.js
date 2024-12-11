@@ -44,21 +44,19 @@ export const updatePwd = (user_id, historyPwd, password) => {
 }
 
 // 获取用户收藏
-export const getUserCollect = (limit, page) => {
-  return request.get('/getCollectList', {
+export const getUserCollect = (user_id) => {
+  return request.get('/getUserCollect', {
     params: {
-      limit,
-      page
+      user_id
     }
   })
 }
 
 // 获取用户历史浏览
-export const getUserHistory = (limit = 20, page = 1) => {
-  return request.get('/getHistory', {
+export const getUserHistory = (user_id) => {
+  return request.get('/getUserHistory', {
     params: {
-      limit,
-      page
+      user_id
     }
   })
 }
@@ -71,20 +69,20 @@ export const getUserCreate = ( user_id, create_type ) => {
     }
   })
 }
-// 发送邮箱验证码
-export const sendCode = (email) => {
-  return request.get('/getEmailCode', {
-    params: {
-      email
-    }
-  })
-}
+// // 发送邮箱验证码
+// export const sendCode = (email) => {
+//   return request.get('/getEmailCode', {
+//     params: {
+//       email
+//     }
+//   })
+// }
 
-// 忘记密码
-export const forgetPassword = (email, newPwd, emailCode) => {
-  return request.post('/forget', {
-    email,
-    newPwd,
-    emailCode
-  })
-}
+// // 忘记密码
+// export const forgetPassword = (email, newPwd, emailCode) => {
+//   return request.post('/forget', {
+//     email,
+//     newPwd,
+//     emailCode
+//   })
+// }

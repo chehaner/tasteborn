@@ -14,12 +14,13 @@
       </template>
     </var-app-bar>
     <div class="search-list" ref="searchListElement">
-      <van-list
+      <!-- <van-list
         v-model:loading="loading"
         :finished="finished"
         finished-text="没有更多了"
         @load="onLoad"
       >
+      </van-list> -->
         <LibraryContentItem
           :key="item.recipe_id"
           :id="item.recipe_id"
@@ -33,7 +34,6 @@
           v-for="item in searchList"
         >
         </LibraryContentItem>
-      </van-list>
     </div>
   </div>
 </template>
@@ -82,14 +82,14 @@ onActivated(() => {
 
 // 搜索内容初始化
 async function initSearch() {
-  loading.value = true // loading 默认不加载
+  // loading.value = true // loading 默认不加载
   finished.value = false // finished 默认显示加载未完成
 
   const res = await getSearch(props.iptValue)
   // 判断搜索结果是否为空
   if (res.status === 403)  {
     finished.value = true
-    loading.value = true
+    // loading.value = true
     return
   }
   if (res.status !== 200) return Snackbar.error(res.message)
@@ -101,9 +101,9 @@ async function initSearch() {
   // })
   // 这里赋值
   searchList.value = res.data
-  setTimeout(() => {
-    loading.value = false
-  }, 1000)
+  // setTimeout(() => {
+  //   loading.value = false
+  // }, 1000)
 }
 
 // 返回搜索页
@@ -146,7 +146,6 @@ watch(() => props.iptValue, () => {
     width: 100vw;
     height: 100vh;
     overflow: scroll;
-    padding-top: 0.80rem;
   }
 }
 :deep(.var-app-bar__toolbar) {

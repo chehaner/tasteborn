@@ -30,11 +30,12 @@
       </div >
     </div>
     <div class="novel-info-updateTime">
-        最后更新时间: <span>{{ props.publish_time }}</span>
+        最后更新时间: <span>{{ timeUpdate() }}</span>
     </div>
 </template>
 
 <script setup>
+import moment from "moment";
 import { computed, ref } from 'vue';
 const props = defineProps({
     ingredients_count: {
@@ -62,7 +63,10 @@ const props = defineProps({
         default: ""
     },
 });
-
+// 初始化时间
+function timeUpdate() {
+  return moment(props.publish_time).format('YYYY-MM-DD h:mm:ss')
+}
 // 解析原料和用量
 const parsedIngredients = computed(() => {
   // 按 ***** 分割每种原料

@@ -14,6 +14,7 @@
       :classTags="recipeInfo.classTags"
       :intro="recipeInfo.content"
       :recipe_id="recipeInfo.recipe_id"
+      :rate="recipeInfo.average_rate"
     />
     <!-- <NovelDirectory
       :recent-chapters="recipeInfo.recentChapters"
@@ -26,7 +27,6 @@
       :steps="recipeInfo.steps"
       :tags="recipeInfo.tags"
       :publish_time="recipeInfo.publish_time"
-      :rate="recipeInfo.rate"
     />
     <NovelComment
       :recipe_id="recipeInfo.recipe_id"

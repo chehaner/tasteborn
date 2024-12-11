@@ -1,12 +1,14 @@
 import request from "@/utils/request";
 
-export const getBlog = () => {
-  return request.get('/getBlog')
+export const getBlog = (user_id) => {
+  return request.get('/getBlog',{
+    params:{ user_id}
+  })
 }
 
-export const getBlogDetail = (blog_id) => {
+export const getBlogDetail = (blog_id, user_id) => {
   return request.get('/getBlogDetail', {
-    params: { blog_id }
+    params: { blog_id, user_id }
   });
 };
 
@@ -44,5 +46,24 @@ export const replyComment = (comment_id, user_id, content) => {
     comment_id,
     user_id, 
     content
+  })
+}
+
+export const getUserCollect = (blog_id, user_id) => {
+  return request.get('/getCollectBlog', {
+    params: {
+      blog_id,
+      user_id
+    }
+  })
+}
+
+export const updateCollect = (user_id, blog_id, flag) => { 
+  return request.post('/updateCollectBlog', { 
+    params: {
+     user_id, 
+     blog_id,
+     flag 
+    },
   })
 }

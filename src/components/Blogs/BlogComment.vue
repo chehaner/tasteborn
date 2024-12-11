@@ -83,8 +83,6 @@
               :content="item.content"
               :time="item.publish_time"
               :praise="item.likes"
-              :is-comment-count="false"
-              :is-comment-reply="false"
               :nickname="item.nickname"
               :pic-url="item.picture"
               v-for="item in replyList"
@@ -132,6 +130,7 @@
   const replyCount = ref(0)// 回复评论数量
   const mainCommentId = ref(0)// 主评论id,
   const flag = ref(true)
+  const emit = defineEmits(['updateCount']); 
   onMounted(() => {
     // 默认清除之前的数据
     commentList.value = []
@@ -164,7 +163,9 @@
     if (res.data.length){
         isNull.value = false
         commentList.value = res.data
-        count.value = res.data.length
+        const totalReplyCount = res.data.reduce((sum, item) => sum + item.reply_count, 0);
+        count.value = res.data.length+totalReplyCount
+        emit('updateCount', count.value);
     }else{
         isNull.value = true
     }
@@ -183,9 +184,9 @@
     }
     if (res.status !== 200) return
     Snackbar.success(res.message)
-    // setTimeout(() => {
-    //   window.location.reload()
-    // }, 500)
+    setTimeout(() => {
+      window.location.reload()
+    }, 500)
     if(flag.value){
       initComment()
     }
@@ -220,12 +221,12 @@
         if (res.status !== 200 && res.status !== 204) return Snackbar.error(res.message)
         replyList.value = res.data
         replyCount.value = res.data.length
-        isReply.value = true
-        mainCommentId.value = id
     }else{
         replyCount.value = 0
-        isReply.value = true
     }
+    isReply.value = true
+    mainCommentId.value = id
+    console.log("有设置mainCommentId吗")
   }
   </script>
   

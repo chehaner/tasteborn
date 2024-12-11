@@ -1,5 +1,5 @@
 <template>
-  <div class="novel-comment-item" @click="showReply()">
+  <div class="novel-comment-item">
     <div class="novel-comment-avatar">
       <img :src="picUrl" alt="">
       <div class="novel-comment-name">
@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="novel-comment-right">
-      <div class="novel-comment-content">
+      <div class="novel-comment-content" @click="showReply()">
         {{ content }}
       </div>
       <div class="novel-comment-time">

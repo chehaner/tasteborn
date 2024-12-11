@@ -22,8 +22,8 @@
             <!-- 根据title来动态显示不同的内容 -->
             <div class="favorites-count">
               <span v-if="title === '收藏榜'">收藏人数：{{ ranking.stars }}</span>
-              <span v-else-if="title === '评分榜'">评分：{{ ranking.rate }}</span>
-              <span v-else-if="title === '跟做榜'">跟做人数：{{ ranking.follow }}</span>
+              <span v-else-if="title === '评分榜'">评分：{{ ranking.average_rate }}</span>
+              <span v-else-if="title === '跟做榜'">跟做人数：{{ ranking.refered_count }}</span>
             </div>
 
             <div class="user-info">

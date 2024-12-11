@@ -19,7 +19,7 @@
     <div class="history-content" :class="{'history-content-center': isNull}">
       <div class="history-list" v-if="!isNull">
           <LibraryContentItem
-            :id="item.id"
+            :id="currentTab === 'recipe' ? item.recipe_id : item.blog_id"
             :pic-url="currentTab === 'recipe' ? item.img : item.photo_url" 
             :name="currentTab === 'recipe' ? item.recipe_name : item.content" 
             :author="item.nickname"
@@ -27,6 +27,7 @@
             :stars="item.stars"
             v-for="item in createList"
             :key="item.id"
+            :flag=1
           />
           <!-- <van-list
           v-model:loading="loading"
@@ -61,14 +62,6 @@ const currentTab = ref("recipe"); // 默认选择 "recipe" 菜谱
 onMounted(() => {
   initCreate(currentTab.value);
 });
-
-// 切换标签时重新加载内容
-function onTabChange(name) {
-  activeTab.value = name;
-  page.value = 1;  // 重置分页
-  createList.value = [];  // 清空当前列表
-  initCreate();  // 重新加载数据
-}
 // 切换标签
 function switchTab(tab) {
   currentTab.value = tab;

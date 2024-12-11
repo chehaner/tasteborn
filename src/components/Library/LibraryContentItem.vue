@@ -61,10 +61,6 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  isAnimation: {
-    type: Boolean,
-    default: false
-  },
   intro: {
     type: Array,
     default: []
@@ -73,18 +69,10 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  tags: {
-    type: Array,
-    default: []
+  flag: {
+    type: Number,
+    default: 0
   },
-  isSerial: {
-    type: Boolean,
-    default: false
-  },
-  isTags: {
-    type: Boolean,
-    default: false
-  }
 })
 
 // 搜索区域tags 显示不正常
@@ -94,9 +82,15 @@ function tagsSplice(tags) {
 
 // 跳转路由
 function onLink() {
+  if(props.flag){
+    router.push({
+    path: `/blogs/item/${props.id}`,
+  })
+  }else{
   router.push({
     path: `/recipes/${props.id}`,
   })
+}
 }
 </script>
 

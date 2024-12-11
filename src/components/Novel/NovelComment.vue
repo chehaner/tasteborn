@@ -3,7 +3,7 @@
     <div class="novel-comment-box">
       <!-- 评论区标题 -->
       <div class="novel-comment-title">
-        <span>这道菜的评论</span>
+        <span>这道菜的评论 </span>
         <span>共 {{ count }} 条评论</span>
       </div>
       <!-- 输入框 -->
@@ -164,8 +164,9 @@ async function initComment() {
     isNull.value = true
   }else{
     isNull.value = false
+    const totalReplyCount = res.data.reduce((sum, item) => sum + item.reply_count, 0);
+    count.value = res.data.length + totalReplyCount
     commentList.value = res.data
-    count.value = res.data.length
   }
   console.log("isNull.value", isNull.value)
 }
@@ -183,9 +184,9 @@ async function sendComment() {
   }
   if (res.status !== 200) return
   Snackbar.success(res.message)
-  // setTimeout(() => {
-  //   window.location.reload()
-  // }, 500)
+  setTimeout(() => {
+    window.location.reload()
+  }, 500)
   if(flag.value){
     initComment()
   }
@@ -220,19 +221,19 @@ async function onShowReply(id, count) {
         if (res.status !== 200 && res.status !== 204) return Snackbar.error(res.message)
         replyList.value = res.data
         replyCount.value = res.data.length
-        isReply.value = true
-        mainCommentId.value = id
-    }else{
-        replyCount.value = 0
-        isReply.value = true
     }
+  else{
+        replyCount.value = 0
+  }
+  isReply.value = true
+  mainCommentId.value = id
 }
 </script>
 
 <style scoped lang="scss">
 .novel-comment {
   .novel-comment-box {
-    padding: 20px 25px;
+    padding: 15px 15px;
     border-bottom: 1px solid #eee;
     .novel-comment-title {
       display: flex;

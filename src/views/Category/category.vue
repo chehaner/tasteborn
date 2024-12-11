@@ -60,8 +60,8 @@
   // const collectRankings = ref([]);
   onMounted(() => {
     getCollectRankData();
-    // getRateRankData();
-    // getFollowRankData();
+    getRateRankData();
+    getFollowRankData();
   })
   async function getCollectRankData() {
     const res = await getCollectRank();

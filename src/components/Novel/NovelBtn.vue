@@ -9,7 +9,7 @@
     </div> -->
     <div class="novel-collect-btn">
       <Comment theme="outline" size="22"/>
-      <span>评论</span>
+      <span>{{count}}</span>
     </div>
     <div class="novel-collect-btn" @click="navigateToBlogs">
       <Camera theme="outline" size="24"/>
@@ -25,6 +25,7 @@ import { updateCollect, addHistory, cancelCollect, getUserCollect } from "@/api/
 import {onMounted, ref, watch} from "vue";
 import { Snackbar } from "@varlet/ui";
 import {useRouter} from "vue-router";
+import { getComment } from "@/api/novel";
 
 const props = defineProps({
   recipe_id: {
@@ -40,17 +41,20 @@ const props = defineProps({
     default: 0
   },
 })
-
+const emit = defineEmits()
 const isCollect = ref(false)
 const isLogin = ref(false)
 
 const router = useRouter()
 const user_id = localStorage.getItem('user_id')
-
-watch(() => props.recipe_id, () => {
+const count = ref(0)
+watch(() => props.recipe_id, async () => {
   const token = localStorage.getItem('token')
   if (token) {
       initCollectCommentData();
+      const res = await getComment(props.recipe_id)
+      const totalReplyCount = res.data.reduce((sum, item) => sum + item.reply_count, 0);
+      count.value = res.data.length + totalReplyCount
     }
 });
 
@@ -64,7 +68,6 @@ async function initCollectCommentData() {
   if (res.length !== 0) {
     isCollect.value = res.isFavorited;
   }
-  console.log("isCollect", isCollect)
 }
 // 添加或取消收藏
 async function addCollectFun() {
@@ -89,6 +92,7 @@ async function addCollectFun() {
     await updateCollect(user_id, props.recipe_id, 0)
     isCollect.value = false
   }
+  window.location.reload()
 }
 const navigateToBlogs = () => {
   const recipe_id = props.recipe_id; 

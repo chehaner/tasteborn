@@ -9,16 +9,6 @@ export const getRecipeInfo = (recipe_id) => {
   })
 }
 
-// 获取用户收藏
-export const getUserCollect = (recipe_id, user_id) => {
-  return request.get('/getCollect', {
-    params: {
-      recipe_id,
-      user_id
-    }
-  })
-}
-
 // 更新收藏 
 export const updateCollect = (user_id, recipe_id, flag) => { 
   return request.post('/updateCollect', { 
@@ -29,7 +19,15 @@ export const updateCollect = (user_id, recipe_id, flag) => {
     },
   })
 }
-
+// 获取用户收藏
+export const getUserCollect = (recipe_id, user_id) => {
+  return request.get('/getCollect', {
+    params: {
+      recipe_id,
+      user_id
+    }
+  })
+}
 // 获取评论
 export const getComment = (recipe_id) => {
   return request.get('/getComment', {

@@ -19,7 +19,7 @@
       <!-- 收藏 -->
       <div class="star-container">
         <Star theme="outline" size="17" class="star-icon" />
-        <span class="star-text">{{props.star}}</span>
+        <span class="star-text">{{props.star||0}}</span>
       </div>
     </div>
   </div>

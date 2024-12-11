@@ -45,7 +45,7 @@ const props = defineProps({
   },
   imgInfo: {
     type: String,
-    default: "picture.jpg"
+    default: ""
   },
 })
 
@@ -79,11 +79,18 @@ function onChangeAvatar() {
       Snackbar.error('上传失败');
     } else if (data.statusCode === 200 && data.Location) {
       const fileUrl = `https://${data.Location}`;
-      const user_id = localStorage.getItem('user_id')
-      await updateAvatar(user_id, fileUrl);
+      console.log("fileUrl", fileUrl);
+      const user_id = localStorage.getItem('user_id');
+    try {
+      await updateAvatar(user_id, fileUrl); // 等待 updateAvatar 完成
       Snackbar.success('上传成功');
-      window.location.reload();
+      window.location.reload(); // 确保在上传成功后再刷新页面
+    } catch (error) {
+      console.error('更新头像失败:', error);
+      Snackbar.error('更新头像失败');
     }
+}
+
   });
 }
 
