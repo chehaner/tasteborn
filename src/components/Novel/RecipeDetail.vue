@@ -177,8 +177,11 @@ const parsedSteps = computed(() => {
     background-color: #f0f0f0;
 }
 .search-history-list {
+    margin-left: 25px;
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    font-weight: bold;
     .search-history-item {
       padding: 8px 10px;
       font-size: 18px;
@@ -187,4 +190,10 @@ const parsedSteps = computed(() => {
       border-radius: 2px;
     }
   }
+
+.novel-info-updateTime{
+    margin-left: 25px;
+    font-size: 14px;
+    color: #555;
+}
 </style>
