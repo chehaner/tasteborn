@@ -2,7 +2,7 @@
   <div class="user-reg">
     <div class="user-reg-title">
       <h4>注册</h4>
-      <span>欢迎注册次元轻小说</span>
+      <span>欢迎注册MikuCook!</span>
     </div>
     <div class="user-reg-from">
       <div class="user-reg-username">

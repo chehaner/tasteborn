@@ -2,7 +2,7 @@
   <BackBar title="关于" route-link="/user" :is-route="true"></BackBar>
   <div class="user-about">
     <div class="user-about-title">
-      <h2>次元轻小说</h2>
+      <h2>MikuCook!</h2>
     </div>
     <div class="user-about-version">
       <p>版本号</p>

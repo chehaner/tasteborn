@@ -2,7 +2,7 @@
   <div class="user-login">
     <div class="user-login-title">
       <h4>登录</h4>
-      <span>欢迎登录次元轻小说</span>
+      <span>欢迎登录MikuCook!</span>
     </div>
     <div class="user-login-from">
       <div class="user-login-username">

@@ -8,7 +8,7 @@
 
     <!-- 菜谱列表 -->
     <div class="categories-list">
-      <div v-for="(recipe, index) in recipes" :key="index" class="recipe-item">
+      <div v-for="(recipe, index) in recipes" :key="index" class="recipe-item" @click="goToRecipe(recipe.recipe_id)">
         <div class="recipe-image">
           <img :src="recipe.img" alt="Recipe Image" />
         </div>
@@ -37,13 +37,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import BackBar from '@/components/Common/BackBar.vue';
 import HomeTabBar from '@/components/Home/HomeTabBar.vue';
 import BottomTab from '@/components/Common/BottomTab.vue';
 import { getRecipeByTag } from '@/api/category';
 import { Star } from "@icon-park/vue-next";
 const route = useRoute();
+const router = useRouter();
 // const category = route.params.category; // 获取传递的类别参数
 const category = route.query.value;
 const categoryName = ref(route.query.name || "默认类别");
@@ -56,11 +57,20 @@ onMounted(() => {
   getRecipesByCategory(category); // 获取对应类别的菜谱数据
 });
 
+
+
 // 根据类别获取菜谱数据（这里模拟数据）
 async function getRecipesByCategory(category) {
   const res = await getRecipeByTag(category);
   recipes.value = res.data
 }
+
+// 跳转到菜谱详情页面
+function goToRecipe(recipeId) {
+  router.push({ path: `/recipes/${recipeId}` });
+}
+
+
 </script>
 
 <style scoped>

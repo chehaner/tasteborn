@@ -11,7 +11,7 @@
       <!-- 排行榜数据，分为三列展示 -->
     <div class="ranking-detail">
       <ul class="ranking-list">
-        <li v-for="(ranking, index) in ranking" :key="index" class="ranking-item">
+        <li v-for="(ranking, index) in ranking" :key="index" class="ranking-item" @click="goToRecipe(ranking.recipe_id)">
           <div class="ranking-item-sequence">{{ index + 1 }}</div>
           <div class="ranking-item-image">
             <img :src="ranking.img" alt="Recipe Image" class="recipe-image" />
@@ -44,9 +44,10 @@
   import { ref, onMounted } from 'vue';
   import BackBar from '@/components/Common/BackBar.vue';
   import BottomTab from '@/components/Common/BottomTab.vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { getCollectRank, getRateRank, getFollowRank } from '@/api/category';
   const route = useRoute();
+  const router = useRouter();
   const title = route.params.title; // 获取传递过来的 title 参数
   // 定义动态排行榜数据
   const ranking = ref([])
@@ -75,6 +76,11 @@
     const res = await getFollowRank();
     ranking.value = res.data
   }
+
+  // 跳转到菜谱详情页面
+function goToRecipe(recipeId) {
+  router.push({ path: `/recipes/${recipeId}` });
+}
 
   </script>
   
