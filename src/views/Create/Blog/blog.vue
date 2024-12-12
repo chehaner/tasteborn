@@ -1,7 +1,7 @@
 <template>
     <div class="blog-page">
       <!-- 顶部导航栏 -->
-      <BackBar title="动态发布">
+      <BackBar :title="backBarTitle">
       <template #right>
         <!-- 右上角发布按钮 -->
         <var-button
@@ -81,7 +81,7 @@
   </template>
   
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, comput } from 'vue';
   import { useRouter, useRoute } from "vue-router";
   import BackBar from "@/components/Common/BackBar.vue";
   import COS from 'cos-js-sdk-v5';
@@ -97,6 +97,9 @@
   const blogImg = isEdit ? route.query.blogImg : null;
   const blogData = isEdit ? JSON.parse(route.query.blogData) : null; // 获取编辑时的动态数据
 
+  const backBarTitle = computed(()=>{
+  return route.query.isEdit === 'true' ? '动态编辑' : '动态创作';
+})
 
   // 文本内容
   const content = ref('');

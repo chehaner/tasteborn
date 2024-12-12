@@ -1,7 +1,7 @@
 <template>
     <div>
       <!-- BackBar组件，显示当前类别作为标题 -->
-      <BackBar :title="category" :isRoute="false" />
+      <BackBar :title="categoryName" :isRoute="false" />
   
       <!-- HomeTabBar组件，可以根据需要定制 -->
       <HomeTabBar />
@@ -32,14 +32,16 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, watch } from 'vue';
+  import { ref, onMounted} from 'vue';
   import { useRoute } from 'vue-router';
   import BackBar from '@/components/Common/BackBar.vue';
   import HomeTabBar from '@/components/Home/HomeTabBar.vue';
   import BottomTab from '@/components/Common/BottomTab.vue';
   import { getRecipeByTag } from '@/api/category';
   const route = useRoute();
-  const category = route.params.category; // 获取传递的类别参数
+  // const category = route.params.category; // 获取传递的类别参数\
+  const category = route.query.value;
+  const categoryName = ref(route.query.name || "默认类别");
   const recipes = ref([]);
   
   // 模拟数据加载，根据类别加载不同的菜谱数据
