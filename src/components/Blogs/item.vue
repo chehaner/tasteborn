@@ -30,40 +30,40 @@
           <Comment theme="outline" size="20"/>
           <span>{{ count }}</span>
         </div>
-        <div 
+        <!-- <div 
           v-if="isAuthor" 
           class="novel-collect-btn1" 
           @click="editPost">
           <Edit theme="outline" size="24" />
           <span>编辑</span>
+        </div> -->
+        <!-- 编辑按钮 -->
+        <div v-if="isAuthor" class="novel-collect-btn">
+          <var-menu placement="top" same-width :offset-y="6">
+            <div class="novel-collect-btn">
+              <Edit theme="outline" size="24" />
+              <span>编辑</span>
+            </div>
+            <template #menu>
+              <var-cell ripple @click="editPost" style="color: black;">修改</var-cell>
+              <var-cell ripple @click="showDeleteDialog" style="color: black;">删除</var-cell>
+            </template>
+          </var-menu>
         </div>
-        <div 
-          v-if="isAuthor" 
-          class="novel-collect-btn1" 
-          @click="editPost">
-          <Edit theme="outline" size="24" />
-          <span>编辑</span>
-        </div>
+        <!-- 删除确认弹窗 -->
+        <var-dialog
+          v-model:show="showDialog"
+          title="确认删除"
+          message="删除这个菜谱吗？"
+          show-confirm-button
+          show-cancel-button
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          confirm-button-color="#d9534f"
+          @confirm="deleteConfirmed"
+          @cancel="deleteCanceled"
+        />
       </div>
-
-      <!-- 评论框（默认显示）
-      <div v-show="showComments" class="comments-section">
-        <div v-for="(comment, index) in post.commentsList" :key="index" class="comment">
-          <img :src="comment.userAvatar" alt="用户头像" class="comment-avatar" />
-          <div class="comment-text">{{ comment.text }}</div>
-        </div>
-
-        <div class="post-comment">
-          <img src="user-avatar.jpg" alt="用户头像" class="comment-avatar" />
-          <input
-            v-model="newComment"
-            type="text"
-            class="comment-input"
-            placeholder="说点什么..."
-          />
-          <button @click="submitComment" class="send-button">发送</button>
-        </div>
-      </div> -->
       <!-- 发布日期 -->
       <div class="post-date">{{ post.publish_time }}</div>
       <BlogComment 
@@ -76,10 +76,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; // 用来获取路由参数
-import { getBlogDetail, updateCollect } from '@/api/blog'; // 假设你的 API 请求函数
+import { getBlogDetail, updateCollect, deleteBlog } from '@/api/blog'; // 假设你的 API 请求函数
 import { Comment, ThumbsUp, Edit } from "@icon-park/vue-next";
 import BackBar from '@/components/Common/BackBar.vue';
 import BlogComment from './BlogComment.vue';
+import { Snackbar } from '@varlet/ui';
 const route = useRoute(); // 获取当前路由对象
 const router = useRouter();
 
@@ -88,6 +89,7 @@ const count = ref(0)
 const isCollect = ref();
 const user_id = localStorage.getItem('user_id')
 const blog_id = route.params.blog_id;
+const showDialog = ref(false);
 function handleCountUpdate(newCount) {
   count.value = newCount;  // 更新父组件中的 count
 }
@@ -128,13 +130,14 @@ function getImageClass(imageCount) {
 
 
 const isAuthor = computed(() => Number(user_id) === Number(post.value?.blog.author_id)); // 判断当前用户是否为动态作者
-
+console.log("是作者吗", isAuthor)
 // 点击编辑按钮
 function editPost() {
   if (!post.value) return; // 如果未加载动态数据，则返回
   router.push({
     name: 'Blog', // 确保路由名称对应创建动态页面
     query: { 
+      blog_id: blog_id,
       isEdit:'true',
       blogImg:[post.value.imageUrls],
       blogData: JSON.stringify(post.value.blog)
@@ -142,10 +145,30 @@ function editPost() {
     },
   });
 }
+const showDeleteDialog = () => {
+  showDialog.value = true;
+};
 
+const deleteConfirmed = async () => {
+  const res = await deleteBlog(blog_id)
+  showDialog.value = false;
+  if(res.status==200){
+    Snackbar.success(res.message)
+  }
+  router.push('/blogs');
+};
+
+const deleteCanceled = () => {
+  showDialog.value = false;
+  console.log('用户取消删除');
+};
 </script>
   
   <style scoped lang="scss">
+::v-deep .var-cell {
+  color: black;
+}
+
 .blogs-page {
   padding: 20px;
   margin-bottom: 20px;

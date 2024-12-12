@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { getRecipeInfo, getNovelRoll } from "@/api/novel";
+import { getRecipeInfo, getNovelRoll, getReferBlog } from "@/api/novel";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { Snackbar } from "@varlet/ui"
@@ -58,6 +58,7 @@ const route = useRoute()
 
 const id = route.params.id
 const recipeInfo = ref({})
+const blogInfo = ref({})
 const rollArr = ref([])
 
 onMounted(() => {
@@ -65,14 +66,26 @@ onMounted(() => {
   rollArr.value = []
 
   // 初始化菜谱基本信息
-  
   initRecipeInfo()
   // initNovelRoll()
 })
 // 获取菜谱信息
 async function initRecipeInfo() {
-  const res = await getRecipeInfo(id)
-  recipeInfo.value = res.data
+  try {
+    // 获取菜谱信息
+    const res = await getRecipeInfo(id);
+    recipeInfo.value = res.data;
+
+    // 确保 getRecipeInfo 完成后再发起 getReferBlog
+    if (recipeInfo.value && recipeInfo.value.recipe_id) {
+      const blogRes = await getReferBlog(recipeInfo.value.recipe_id);
+      blogInfo.value = blogRes.data;
+    } else {
+      console.error("没有找到相关的 blog_id");
+    }
+  } catch (error) {
+    console.error("获取菜谱信息或相关博客失败:", error);
+  }
 }
 
 // // 获取小说卷名

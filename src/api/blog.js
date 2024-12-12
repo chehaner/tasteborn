@@ -67,3 +67,8 @@ export const updateCollect = (user_id, blog_id, flag) => {
     },
   })
 }
+export const deleteBlog = (blog_id) => {
+  return request.post('deleteBlog', {
+    blog_id
+  })
+}

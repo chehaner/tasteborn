@@ -88,3 +88,15 @@ export const addRate = ( user_id, recipe_id, rate ) => {
     rate          // 评分
   })
 }
+
+export const deleteRecipe = ( recipe_id ) => {
+  return request.post('/deleteRecipe', {
+    recipe_id
+  })
+}
+
+export const getReferBlog = ( recipe_id ) => {
+  return request.post('/getReferBlog', {
+    recipe_id
+  })
+}

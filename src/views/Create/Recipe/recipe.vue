@@ -291,23 +291,6 @@ const removeIngredient = (index) => ingredients.value.splice(index, 1);
 // 步骤操作
 const addStep = () => steps.value.push({ description: "" });
 const removeStep = (index) => steps.value.splice(index, 1);
-
-  // function addIngredient() {
-  //   ingredients.value.push({ name: "", amount: "" });
-  // }
-  
-  // function removeIngredient(index) {
-  //   ingredients.value.splice(index, 1);
-  // }
-  
-  // function addStep() {
-  //   steps.value.push({ description: "" });
-  // }
-  
-  // function removeStep(index) {
-  //   steps.value.splice(index, 1);
-  // }
-  //////////////////////////////// 发布菜谱
 const handlePublish = async () => {
   if (!recipeTitle.value.trim()) {
     alert("标题不能为空！");
@@ -360,19 +343,21 @@ const handlePublish = async () => {
     }
   }
   const user_id = localStorage.getItem("user_id");
+  const recipe_id = route.query.recipe_id;
   try {
     // 使用 fetch 发送 POST 请求到后端
     const result = await addRecipe(
-    coverImage.value,   // 封面图
-    recipeTitle.value,  // 标题
-    description.value,  // 描述
-    ingredientsData,  // 用料
-    ingredients_count,
-    stepsData,        // 做法
-    steps_count,
-    selectedCategories.value,
-    user_id
-  );
+      coverImage.value,   // 封面图
+      recipeTitle.value,  // 标题
+      description.value,  // 描述
+      ingredientsData,  // 用料
+      ingredients_count,
+      stepsData,        // 做法
+      steps_count,
+      selectedCategories.value,
+      user_id,
+      recipe_id||null
+    );
     // 后端返回成功的响应
     if (result.status === 200) {
       Snackbar.success("菜谱发布成功！")

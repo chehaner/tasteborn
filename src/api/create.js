@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 // 添加菜谱
-export const addRecipe = ( img, recipe_name, content, ingredients, ingredients_count, steps, steps_count, tags, user_id) => {
+export const addRecipe = ( img, recipe_name, content, ingredients, ingredients_count, steps, steps_count, tags, user_id, recipe_id) => {
     return request.post('/addRecipe', {
         img, 
         recipe_name, 
@@ -10,16 +10,18 @@ export const addRecipe = ( img, recipe_name, content, ingredients, ingredients_c
         steps, 
         steps_count,
         tags,
-        user_id
+        user_id,
+        recipe_id
     })
   }
-  // 添加菜谱
-export const addBlog = ( user_id, content, images, refer_id ) => {
+  // 添加动态
+export const addBlog = ( user_id, content, images, refer_id, blog_id ) => {
     return request.post('/addBlog', {
         user_id, 
         content, 
         images,
-        refer_id
+        refer_id,
+        blog_id
     })
   }
 

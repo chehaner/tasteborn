@@ -91,6 +91,7 @@
   const router = useRouter();
   const route = useRoute();
   const recipe_id = route.query.recipe_id;
+  const blog_id = route.query.blog_id;
   const recipeInfo = ref([]);
   const isEdit = route.query.isEdit === "true"; // 判断是否为编辑状态
   const blogImg = isEdit ? route.query.blogImg : null;
@@ -130,6 +131,7 @@
   }
 
   async function handleSubmit() {
+
     if (!content.value.trim() && images.value.length === 0) {
       Snackbar.warning('请填写内容或选择图片后再发布！');
       return;
@@ -143,9 +145,9 @@
           .then(blob => new File([blob], `image-${index}.jpg`, { type: blob.type }));
         return uploadImageToCos(file, index);
       });
-
+      console.log("拿到了吗", blog_id)
       const uploadedImages = await Promise.all(uploadPromises);
-      const res = await addBlog(user_id, content.value, uploadedImages, recipe_id);
+      const res = await addBlog(user_id, content.value, uploadedImages, recipe_id, blog_id||null);
 
       if (res?.status === 200) {
         Snackbar.success('动态发布成功！');

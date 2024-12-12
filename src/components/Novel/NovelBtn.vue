@@ -1,44 +1,61 @@
 <template>
   <div class="novel-btn">
+    <!-- 收藏按钮 -->
     <div class="novel-collect-btn" @click="addCollectFun">
-      <star :theme="isCollect ? 'filled' :'outline'" size="24" :fill="isCollect ? '#189a7c' : '#333'"/>
-      <span :class="{ 'novel-color': isCollect }">{{props.star}}</span>
+      <Star :theme="isCollect ? 'filled' : 'outline'" size="24" :fill="isCollect ? '#189a7c' : '#333'" />
+      <span :class="{ 'novel-color': isCollect }">{{ props.star }}</span>
     </div>
-    <!-- <div class="novel-star-btn">
-      <var-button type="primary" color="#189a7c" @click="onRead">开始阅读</var-button>
-    </div> -->
+
+    <!-- 评论按钮 -->
     <div class="novel-collect-btn">
-      <Comment theme="outline" size="22"/>
-      <span>{{count}}</span>
+      <Comment theme="outline" size="22" />
+      <span>{{ count }}</span>
     </div>
+
+    <!-- 交作业按钮 -->
     <div class="novel-collect-btn" @click="navigateToBlogs">
-      <Camera theme="outline" size="24"/>
+      <Camera theme="outline" size="24" />
       <span>交作业</span>
     </div>
 
-<!-- 编辑按钮 -->
-    <div 
-      v-if="props.author_id === user_id" 
-      class="novel-collect-btn" 
-      @click="navigateToEditRecipe"
-    >
-      <Edit theme="outline" size="24" />
-      <span>编辑</span>
+    <!-- 编辑按钮 -->
+    <div class="novel-collect-btn" v-if="Number(props.author_id) === Number(user_id)">
+      <var-menu placement="top" same-width :offset-y="6">
+        <div class="novel-collect-btn">
+          <Edit theme="outline" size="24" />
+          <span>编辑</span>
+        </div>
+        <template #menu>
+          <var-cell ripple @click="navigateToEditRecipe">修改</var-cell>
+          <var-cell ripple @click="showDeleteDialog">删除</var-cell>
+        </template>
+      </var-menu>
     </div>
-
+     <!-- 删除确认弹窗 -->
+     <var-dialog
+      v-model:show="showDialog"
+      title="确认删除"
+      message="删除这个菜谱吗？"
+      show-confirm-button
+      show-cancel-button
+      confirm-button-text="确认"
+      cancel-button-text="取消"
+      confirm-button-color="#d9534f"
+      @confirm="deleteConfirmed"
+      @cancel="deleteCanceled"
+    />
   </div>
 </template>
+
 
 <script setup>
 import { Comment, Star, Camera, Edit } from "@icon-park/vue-next";
 import { Dialog } from '@varlet/ui'
-import { updateCollect, addHistory, cancelCollect, getUserCollect } from "@/api/novel";
+import { updateCollect, getUserCollect, deleteRecipe } from "@/api/novel";
 import {onMounted, ref, watch} from "vue";
 import { Snackbar } from "@varlet/ui";
 import {useRouter} from "vue-router";
 import { getComment } from "@/api/novel";
-
-
 const props = defineProps({
   recipe_id: {
     type: Number,
@@ -56,13 +73,32 @@ const props = defineProps({
     type: Array
   },
 })
+const showDialog = ref(false);
+
+const showDeleteDialog = () => {
+  showDialog.value = true;
+};
+
+const deleteConfirmed = async () => {
+  const res = await deleteRecipe(props.recipe_id)
+  showDialog.value = false;
+  if(res.status==200){
+    Snackbar.success(res.message)
+  }
+  router.push('/home');
+};
+
+const deleteCanceled = () => {
+  showDialog.value = false;
+  console.log('用户取消删除');
+};
 const emit = defineEmits()
 const isCollect = ref(false)
 const isLogin = ref(false)
-
 const router = useRouter()
 const user_id = localStorage.getItem('user_id')
 const count = ref(0)
+const showDropdown = ref(false); 
 watch(() => props.recipe_id, async () => {
   const token = localStorage.getItem('token')
   if (token) {
@@ -72,10 +108,6 @@ watch(() => props.recipe_id, async () => {
       count.value = res.data.length + totalReplyCount
     }
 });
-
-
-console.log("12345",props.recipeInfo)
-
 // 判断用户是否已经收藏
 async function initCollectCommentData() {
   const res = await getUserCollect(props.recipe_id, user_id)
@@ -116,7 +148,6 @@ const navigateToBlogs = () => {
   const recipe_id = props.recipe_id; 
   router.push({ path: '/create/blog', query: { recipe_id } });
 };
-
 // 跳转到编辑菜谱页面
 const navigateToEditRecipe = () => {
   router.push({
@@ -125,36 +156,6 @@ const navigateToEditRecipe = () => {
     state: { recipeData: props.recipeInfo } // 将菜谱信息通过 state 传递
   });
 };
-
-
-// // 弹出框
-// async function collectResult(message, fun, flag) {
-//   await Dialog({
-//     title: '确认',
-//     message,
-//     confirmButtonTextColor: "#189a7c",
-//     cancelButtonTextColor: "#189a7c",
-//     closeOnClickOverlay: false,
-//     // 按下确认或取消按钮
-//     async onBeforeClose(action) {
-//       if (action === 'confirm') {
-//         const res = await fun(props.id)
-//         if (res.status !== 200) return Snackbar.error(res.message)
-
-//         Snackbar.success(res.message)
-//         setTimeout(async () => {
-//           // 收藏按钮颜色变化
-//           isCollect.value = flag
-//           // 关闭窗口
-//           await Dialog.close()
-//         })
-//       } else {
-//         // 关闭窗口
-//         await Dialog.close()
-//       }
-//     }
-//   })
-// }
 </script>
 
 <style scoped lang="scss">
