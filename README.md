@@ -1,4 +1,4 @@
-# novel-mobile
+# tasteborn-mobile
 
 ## Project setup
 ```
