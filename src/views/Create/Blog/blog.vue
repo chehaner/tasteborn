@@ -81,7 +81,7 @@
   </template>
   
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, comput } from 'vue';
   import { useRouter, useRoute } from "vue-router";
   import BackBar from "@/components/Common/BackBar.vue";
   import COS from 'cos-js-sdk-v5';

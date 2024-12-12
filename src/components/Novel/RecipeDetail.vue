@@ -32,6 +32,9 @@
     <div class="novel-info-updateTime">
         最后更新时间: <span>{{ timeUpdate() }}</span>
     </div>
+
+   
+
 </template>
 
 <script setup>
@@ -40,7 +43,6 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
 
 
 const props = defineProps({
@@ -69,6 +71,10 @@ const props = defineProps({
         default: ""
     },
 });
+
+
+
+
 // 初始化时间
 function timeUpdate() {
   return moment(props.publish_time).format('YYYY-MM-DD h:mm:ss')
@@ -242,4 +248,6 @@ const cuisineCategories = ref([
     font-size: 14px;
     color: #555;
 }
+
+
 </style>

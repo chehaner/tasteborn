@@ -21,6 +21,31 @@
           />
         </div>
       </div>
+
+    <div v-if="post.recipeInfo" class="library-content-item" @click="goToRecipePage(post.recipeInfo.recipe_id)">
+        <!-- 菜谱图片 -->
+        <div class="library-content-img">
+          <img :src="post.recipeInfo.img" class="shadow" alt="菜谱图片">
+        </div>
+        <div class="library-content-info">
+          <!-- 菜谱名 -->
+          <div class="library-content-top">
+            <div class="library-content-name">              
+              {{ post.recipeInfo.recipe_name }}
+            </div>
+          </div>
+          <div class="novel-header-author">
+            <div>
+              <!-- 作者头像 -->
+              <img class="author-avatar" :src="post.recipeInfo.picture" alt="用户头像" />
+              <!-- 作者昵称 -->
+              <span class="author-nickname">{{ post.recipeInfo.nickname }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <div class="novel-btn">
         <div class="novel-collect-btn" @click="addCollectFun">
           <thumbs-up :theme="isCollect ? 'filled' :'outline'" size="20" :fill="isCollect ? '#189a7c' : '#333'"/>
@@ -46,24 +71,6 @@
         </div>
       </div>
 
-      <!-- 评论框（默认显示）
-      <div v-show="showComments" class="comments-section">
-        <div v-for="(comment, index) in post.commentsList" :key="index" class="comment">
-          <img :src="comment.userAvatar" alt="用户头像" class="comment-avatar" />
-          <div class="comment-text">{{ comment.text }}</div>
-        </div>
-
-        <div class="post-comment">
-          <img src="user-avatar.jpg" alt="用户头像" class="comment-avatar" />
-          <input
-            v-model="newComment"
-            type="text"
-            class="comment-input"
-            placeholder="说点什么..."
-          />
-          <button @click="submitComment" class="send-button">发送</button>
-        </div>
-      </div> -->
       <!-- 发布日期 -->
       <div class="post-date">{{ post.publish_time }}</div>
       <BlogComment 
@@ -80,6 +87,8 @@ import { getBlogDetail, updateCollect } from '@/api/blog'; // 假设你的 API �
 import { Comment, ThumbsUp, Edit } from "@icon-park/vue-next";
 import BackBar from '@/components/Common/BackBar.vue';
 import BlogComment from './BlogComment.vue';
+import { getRecipeInfo } from '@/api/novel';
+
 const route = useRoute(); // 获取当前路由对象
 const router = useRouter();
 
@@ -106,13 +115,28 @@ async function addCollectFun() {
   }
   window.location.reload()
 }
+
+function goToRecipePage(recipeId) {
+  router.push({
+    path: `/recipes/${recipeId}`,
+  });
+}
+
 // 页面加载时获取博客详情
 onMounted(async () => {
   const user_id = localStorage.getItem('user_id');
   const blog_id = route.params.blog_id;
   const res = await getBlogDetail(blog_id, user_id);
   post.value = res.data;
+  console.log("111",post.value);
   isCollect.value = res.data.blog.isFavorited;
+
+// 加载引用菜谱信息
+  if (post.value.blog.refer_id) {
+    const recipeRes = await getRecipeInfo(post.value.blog.refer_id);
+    post.value.recipeInfo = recipeRes.success ? recipeRes.data : null;
+  }
+
 });
 
 // 根据图片数量返回相应的类名
@@ -202,6 +226,64 @@ function editPost() {
   width: 45%;
   height: auto;
   border-radius: 8px;
+}
+
+/* 引用菜谱 */
+.library-content-item {
+  display: flex;
+  padding: 10px;
+  border: 1px solid #ddd; /* 设置边框颜色 */
+  border-radius: 12px; /* 设置圆角 */
+}
+
+.library-content-img {
+  width: 100px;
+  height: 100px;
+  margin-right: 16px;
+  border-radius: 10px;
+}
+
+.library-content-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.library-content-info {
+  flex-grow: 1;
+}
+
+.library-content-top {
+}
+
+.library-content-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.novel-header-author {
+  margin-top:20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.novel-header-author > div {
+  display: flex;
+  align-items: center;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.author-nickname {
+  font-size: 18px;
+  color: #666;
 }
 
 .post-actions {

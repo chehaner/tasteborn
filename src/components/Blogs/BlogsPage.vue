@@ -20,16 +20,16 @@
         </div>
       </div>
       <!-- 引用菜谱部分 -->
-      <div v-if="post.refer_id" class="library-content-item">
+      <div v-if="post.refer_id && post.recipeInfo" class="library-content-item" @click="goToRecipePage(post.recipeInfo.recipe_id)">
         <!-- 菜谱图片 -->
         <div class="library-content-img">
-          <img v-lazy = post.img class="shadow" alt="">
+          <img :src="post.recipeInfo.img" class="shadow" alt="菜谱图片">
         </div>
         <div class="library-content-info">
           <!-- 菜谱名 -->
           <div class="library-content-top">
-            <div class="library-content-name">
-              {{ post.recipe_name }}
+            <div class="library-content-name">              
+              {{ post.recipeInfo.recipe_name }}
             </div>
           </div>
           <!-- 作者+收藏 -->
@@ -80,27 +80,63 @@ import moment from "moment";
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getBlog, updateCollect } from '@/api/blog';
-const router = useRouter();
+import { getRecipeInfo } from '@/api/novel';
 import { Comment, ThumbsUp } from "@icon-park/vue-next";
+
+const router = useRouter();
 const posts = ref([]);
-const isCollect = ref()
+
+
+// 获取菜谱信息并补充到动态中
+async function fetchRecipeInfo(post, index) {
+  try {
+    const res1 = await getRecipeInfo(post.refer_id);
+    console.log("getRecipeInfo response:", res1);
+
+    if (res1.success && res1.data) {
+      // 使用响应式更新方法
+      posts.value[index] = {
+        ...posts.value[index],
+        recipeInfo: res1.data, // 更新 recipeInfo
+      };
+      console.log("成功获取并赋值菜谱信息:", posts.value[index]);
+    }
+    else {
+      console.error("Invalid response from getRecipeInfo:", res1);
+    }
+  } catch (error) {
+    console.error('获取菜谱信息出错:', error);
+  }
+}
+
+
+
 onMounted(async () => {
-      const user_id = localStorage.getItem('user_id');
-      try {
-        const res = await getBlog(user_id); // 调用获取博客的 API
-        if (res.status === 200) {
-          // 在返回的数据中为每个博客添加 isFavorited 属性
-          posts.value = res.data.map(post => ({
-            ...post,
-            isFavorited: post.isFavorited,  // 根据返回数据添加收藏状态
-          }));
-        } else {
-          console.error('获取博客失败:', res.message);
+  const user_id = localStorage.getItem('user_id');
+  try {
+    const res = await getBlog(user_id);
+    if (res.status === 200) {
+      posts.value = res.data.map(post => ({
+        ...post,
+        isFavorited: post.isFavorited, // 根据返回数据添加收藏状态
+        recipeInfo: null, // 初始化为 null，稍后填充
+      }));
+      // console.log("11", posts.value)
+      // 遍历所有有引用的动态并获取菜谱信息
+      posts.value.forEach((post, index) => {
+        if (post.refer_id) {
+          console.log(post.refer_id)
+          fetchRecipeInfo(post, index);
         }
-      } catch (error) {
-        console.error('获取博客出错:', error);
-      }
-    });
+      });
+    } else {
+      console.error('获取博客失败:', res.message);
+    }
+  } catch (error) {
+    console.error('获取博客出错:', error);
+  }
+});
+
 async function addCollectFun(post, index) {
   const user_id = localStorage.getItem('user_id');
   const isFavorited = !post.isFavorited; // 切换收藏状态
@@ -117,6 +153,12 @@ async function addCollectFun(post, index) {
   } catch (error) {
     console.error('更新收藏状态出错:', error);
   }
+}
+
+function goToRecipePage(recipeId) {
+  router.push({
+    path: `/recipes/${recipeId}`,
+  });
 }
 
 // 根据图片数量返回相应的类名
@@ -281,15 +323,15 @@ function goToItemPage(post) {
 .library-content-item {
   display: flex;
   padding: 10px;
-  margin: 10px;
   border: 1px solid #ddd; /* 设置边框颜色 */
   border-radius: 12px; /* 设置圆角 */
 }
 
 .library-content-img {
-  width: 80px;
+  width: 100px;
   height: 100px;
   margin-right: 16px;
+  border-radius: 10px;
 }
 
 .library-content-img img {

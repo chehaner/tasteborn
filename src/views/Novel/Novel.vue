@@ -28,6 +28,11 @@
       :tags="recipeInfo.tags"
       :publish_time="recipeInfo.publish_time"
     />
+
+    <FollowHomework 
+      :recipe_id="recipeInfo.recipe_id"
+    />
+
     <NovelComment
       :recipe_id="recipeInfo.recipe_id"
      />
@@ -53,6 +58,7 @@ import RecipeDetail from "@/components/Novel/RecipeDetail.vue";
 import NovelDirectory from "@/components/Novel/NovelDirectory.vue";
 import NovelComment from "@/components/Novel/NovelComment.vue";
 import NovelBtn from "@/components/Novel/NovelBtn.vue";
+import FollowHomework from "@/components/Novel/FollowHomework.vue";
 
 const route = useRoute()
 
@@ -75,20 +81,7 @@ async function initRecipeInfo() {
   recipeInfo.value = res.data
 }
 
-// // 获取小说卷名
-// async function initNovelRoll() {
-//   const res = await getNovelRoll(id)
-//   if (res.status !== 200) return Snackbar.error(res.message)
-//   rollArr.value = res.data.result
-// }
 
-
-// // 点击最新章节跳转
-// function newestLink() {
-//   setTimeout(() => {
-//     window.location.href = `/read/${ rollArr.value.slice(-1)[0].chapter_list.slice(-1)[0].id }`
-//   }, 0)
-// }
 </script>
 
 <style scoped lang="scss">
