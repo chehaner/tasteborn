@@ -14,6 +14,14 @@ const routes = [
     component: () => import("@/views/Home/Home.vue")
   },
   {
+    path: '/home/referBlog/:recipe_id',
+    name: 'Homework',
+    meta: {
+      title: '菜谱-大家交的作业'
+    },
+    component: () => import("@/components/Novel/ReferBlog.vue")
+  },
+  {
     path: '/blogs',
     name: "Blogs",
     meta: {

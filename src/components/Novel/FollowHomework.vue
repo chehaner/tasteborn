@@ -1,85 +1,83 @@
 <template>
-    <div v-if="blogs.length > 0" class="follow-homework">
+    <div v-if="props.blogInfo.length > 0" class="follow-homework">
       <div class="title">
-        大家交的作业 ({{ totalamount }})
+        大家交的作业 ({{ props.blogInfo.length }})
       </div>
       <div class="blogs-list">
         <div
           class="blog-item"
-          v-for="(blog, index) in displayedBlogs"
+          v-for="(blog, index) in props.blogInfo.slice(0, 3)"
           :key="index"
+          @click="goToBlog(blog.blog_id)"
         >
           <div class="row">
-            <div class="cell author">
-              <img :src="blog.avatar" alt="头像" class="avatar" />
-              <span class="nickname">{{ blog.nickname }}</span>
+            <div class="author">
+              <img :src="blog.author.picture" alt="头像" class="avatar" />
+              <span class="nickname">{{ blog.author.nickname }}</span>
             </div>
-            <div class="cell likes">
-              <button class="like-btn">👍 {{ blog.likes }}</button>
+            <div class="novel-collect-btn">
+              <thumbs-up/>
+              <span>{{ blog.likes }}</span>
             </div>
           </div>
           <div class="row">
-            <div class="cell image">
-              <img :src="blog.image" alt="动态图片" class="blog-image" />
+            <div class="image">
+              <img v-if = "blog.images.length" :src="getFirstItem(blog.images)" class="blog-image" />
             </div>
-            <div class="cell content">
+            <div class="content">
               {{ blog.content }}
             </div>
           </div>
         </div>
       </div>
-      <button v-if="blogs.length > 2" class="view-all-btn" @click="viewAllBlogs">
-        查看全部作业
+      <button v-if="props.blogInfo.length > 2" class="view-all-btn" @click="goToAllBlogs()">
+        ...更多
       </button>
     </div>
   </template>
   
   <script setup>
+import { ThumbsUp } from "@icon-park/vue-next";
   import { ref, onMounted, watch } from "vue";
-//   import { getBlogsRefer } from "@/api/blogs";
-  
+  import { useRouter } from 'vue-router';
+  // 初始化收藏数据
+  const router = useRouter();
   // Props 接收 recipe_id 参数
   const props = defineProps({
     recipe_id: {
       type: Number,
       required: true,
     },
+    blogInfo:{
+      type: Array,
+    }
   });
   
   // 定义数据
-  const blogs = ref([]);
-  const totalamount = ref(0);
-  const displayedBlogs = ref([]);
-  
-  // 获取动态数据
-  const fetchBlogs = async () => {
-    try {
-      const res = await getBlogsRefer(props.recipe_id);
-      if (res.status === 200) {
-        blogs.value = res.data;
-        totalamount.value = blogs.value.length;
-        displayedBlogs.value = blogs.value.slice(0, 2);
-      }
-    } catch (error) {
-      console.error("获取动态失败", error);
-    }
-  };
-  
+  const getFirstItem = (array) => {
+  return array.slice(0, 1);  // 直接返回数组的第一项
+};
   // 跳转查看全部作业
-  const viewAllBlogs = () => {
-    window.location.href = `/blogs?refer_id=${props.recipe_id}`;
+  const goToBlog = (blog_id) => {
+    setTimeout(() => {
+    router.push({
+      path: `/blogs/item/${blog_id}`,
+    });
+  }, 0);
   };
-  
-  onMounted(() => {
-    fetchBlogs();
-  });
+  const goToAllBlogs = () => {
+    setTimeout(() => {
+    router.push({
+      path: `/home/referBlog/${props.recipe_id}`,
+    });
+  }, 0);
+  };
   </script>
   
   <style scoped>
   .follow-homework {
     margin: 20px 0;
-    padding: 10px;
-    background: #f9f9f9;
+    padding: 30px;
     border-radius: 8px;
   }
   .title {
@@ -93,13 +91,14 @@
     gap: 10px;
   }
   .blog-item {
+    padding:15px;
     display: flex;
     flex-direction: column;
     gap: 5px;
     background: #fff;
     padding: 10px;
     border: 1px solid #eaeaea;
-    border-radius: 5px;
+    border-radius: 10px;
   }
   .row {
     display: flex;
@@ -117,11 +116,10 @@
   .avatar {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 100%;
   }
   .nickname {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 18px;
   }
   .likes {
     text-align: right;
@@ -129,27 +127,29 @@
   .like-btn {
     background: none;
     border: none;
-    color: #007bff;
-    cursor: pointer;
+    color: #5b5e60;
   }
   .image {
-    flex: 1;
+    width: 130px;
+    height: 100px;
+    margin-right: 20px;
   }
   .blog-image {
     width: 100%;
-    height: auto;
-    border-radius: 5px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
   }
   .content {
     flex: 2;
-    font-size: 14px;
+    font-size:18px;
     line-height: 1.5;
   }
   .view-all-btn {
-    width: 100%;
+    width: 20%;
     padding: 10px;
     font-size: 16px;
-    background: #007bff;
+    background: #019c788a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -157,7 +157,7 @@
     margin-top: 10px;
   }
   .view-all-btn:hover {
-    background: #0056b3;
+    background: #019c78;
   }
   </style>
   

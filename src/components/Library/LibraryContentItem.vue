@@ -21,7 +21,8 @@
         </div>
         <!-- 收藏 -->
         <div class="star-container">
-          <Star theme="outline" size="17" class="star-icon" />
+          <thumbs-up  v-if="props.flag===1" theme="outline" size="17" class="star-icon" />
+          <Star  v-else theme="outline" size="17" class="star-icon" />
           <span class="star-text">{{props.stars}}</span>
         </div>
       </div>
@@ -30,7 +31,7 @@
 </template>
 
 <script setup>
-import { Star } from "@icon-park/vue-next";
+import { Star, ThumbsUp } from "@icon-park/vue-next";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { computed } from "vue";
@@ -114,7 +115,6 @@ function onLink() {
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
-
 }
 
 .library-content-info {

@@ -6,7 +6,7 @@ const token = localStorage.getItem('token')
 
 // 创建一个 Axios 实例
 const request = axios.create({
-  baseURL: 'http://10.253.37.190:3000', // 设置基本的 API 地址
+  baseURL: 'http://10.252.116.28:3000', // 设置基本的 API 地址
   timeout: 1000000, // 设置请求超时时间
 });
 

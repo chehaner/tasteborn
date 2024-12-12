@@ -31,6 +31,7 @@
 
     <FollowHomework 
       :recipe_id="recipeInfo.recipe_id"
+      :blogInfo="blogInfo"
     />
 
     <NovelComment

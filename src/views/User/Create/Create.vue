@@ -24,10 +24,10 @@
             :name="currentTab === 'recipe' ? item.recipe_name : item.content" 
             :author="item.nickname"
             :avatar="item.picture"
-            :stars="item.stars"
+            :stars="currentTab === 'recipe' ? item.stars : item.likes" 
             v-for="item in createList"
             :key="item.id"
-            :flag=1
+            :flag="currentTab === 'recipe' ? 0 : 1"
           />
           <!-- <van-list
           v-model:loading="loading"
