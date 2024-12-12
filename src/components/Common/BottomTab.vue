@@ -8,7 +8,7 @@
         v-for="(item, index) in tabList"
         :key="index"
         @click="routerJump(item.url)"/> -->
-      <var-bottom-navigation-item label='首页' icon='home' @click="routerJump('/')"></var-bottom-navigation-item>
+      <var-bottom-navigation-item label='首页' icon='home' @click="routerJump('/home')"></var-bottom-navigation-item>
       <!-- <var-bottom-navigation-item label='分类' icon='notebook' @click="routerJump('/library')"></var-bottom-navigation-item> -->
       <var-bottom-navigation-item label='创建' icon='plus-circle' @click="routerJump('/create')"></var-bottom-navigation-item>
       <!-- <var-bottom-navigation-item label='动态' icon='radio-marked' @click="routerJump('/')"></var-bottom-navigation-item> -->
