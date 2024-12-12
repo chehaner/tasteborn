@@ -14,7 +14,7 @@ const routes = [
     component: () => import("@/views/Home/Home.vue")
   },
   {
-    path: '/home/referBlog/:recipe_id',
+    path: '/home/referBlog',
     name: 'Homework',
     meta: {
       title: '菜谱-大家交的作业'

@@ -313,24 +313,24 @@ const handlePublish = async () => {
   .join("*****");  // 用 '*****' 拼接所有步骤的描述
   // 如果封面图已选择，进行上传
   if (coverFile.value) {
-    const fileName = `recipes/${recipeTitle.value}`; // 生成唯一文件名
+    const fileName = `recipes/${recipeTitle.value}`; // 文件名
     const cos = new COS({
-      SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',   // 替换成你的 SecretId
-      SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'       // 替换成你的 SecretKey
+      SecretId: 'AKIDa5OYWLySmutfDf1EWltqqsqhOsBHApHk',   
+      SecretKey: 'Vnyz0aGrOo8II6nKo7MRQsQqBOZbWK7m'       
     });
     try {
       await new Promise((resolve, reject) => {
         cos.putObject({
-          Bucket: 'test3-1331403891',   // 填写你的 COS 桶名称
-          Region: 'ap-guangzhou',       // 填写你的 COS 区域
-          Key: fileName,                // 文件名
-          Body: coverFile.value,        // 文件内容
-          ContentType: coverFile.value.type,       // 文件类型
+          Bucket: 'test3-1331403891', 
+          Region: 'ap-guangzhou',
+          Key: fileName, 
+          Body: coverFile.value,
+          ContentType: coverFile.value.type,
         }, (err, data) => {
           if (err) {
             reject(err);
           } else {
-            coverImage.value = `https://${data.Location}`; // 更新封面图路径
+            coverImage.value = `https://${data.Location}`; 
             console.log("上传成功", `https://${data.Location}`)
             resolve();
           }

@@ -83,6 +83,7 @@
   .ranking-detail {
     padding: 10px;
     background-color: rgb(253, 250, 244);
+    margin-bottom:40px;
   }
   
   /* 排行第一的菜谱图片 */
